@@ -9,7 +9,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI, system-ui, sans-serif;
     }
 
     body {
@@ -247,7 +247,7 @@
     <div>
       <div class="title">飞书排班 → 文本生成器</div>
       <div class="subtitle">
-        从飞书/表格复制日期行 + 星期行 + 个人排班行，粘贴后一键生成文字版时间表
+        从飞书或表格复制日期行 + 星期行 + 个人排班行，粘贴后一键生成文字版时间表
       </div>
     </div>
     <div class="badge">本地解析 · 适合 GitHub Pages</div>
@@ -263,18 +263,18 @@
       <textarea
         id="inputRaw"
         class="input-area"
-        placeholder="示例使用方式&#10;- 在飞书中：用鼠标选中 3 行：日期行、星期行、你的排班行&#10;- 复制后直接粘贴到这里&#10;&#10;例：&#10;12月1日    12月2日    12月3日 ...&#10;星期一      星期二      星期三   ...&#10;Ji Hong Kong 江积宏   OFF    REST   9:00 ..."
+        placeholder="示例用法&#10;- 在飞书中选中 3 行：日期行、星期行、你的排班行&#10;- 复制后直接粘贴到这里&#10;&#10;例：&#10;12月1日  12月2日  12月3日 ...&#10;星期一   星期二   星期三  ...&#10;OFF  REST  9:00  9:00  ..."
       ></textarea>
 
       <div class="controls">
         <div class="left-controls">
           <div class="field-group">
             <label for="nameKeyword">姓名关键字</label>
-            <input id="nameKeyword" type="text" placeholder="如 Ji Hong / 积宏" />
+            <input id="nameKeyword" type="text" placeholder="可留空，默认使用最后一行" />
           </div>
           <div class="field-group">
             <label for="monthHint">月份提示</label>
-            <input id="monthHint" type="text" placeholder="默认自动识别" />
+            <input id="monthHint" type="text" placeholder="一般可留空" />
           </div>
         </div>
         <div class="btn-row">
@@ -294,12 +294,12 @@
       <textarea
         id="outputText"
         class="output-area"
-        placeholder="点击左侧的 生成时间表，这里将自动生成：&#10;12月1日（星期一）：OFF&#10;12月2日（星期二）：REST&#10;..."
+        placeholder="点击左侧生成时间表，这里会自动生成：&#10;12月1日（星期一）：OFF&#10;12月2日（星期二）：REST&#10;..."
       ></textarea>
 
       <div class="controls">
         <div class="left-controls">
-          <span style="font-size:11px;color:#6b7280;">规则：空白单元格会被自动忽略，只保留有班次/备注的日期。</span>
+          <span style="font-size:11px;color:#6b7280;">规则：空白单元格会被自动忽略，只保留有班次或备注的日期。</span>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" id="btnCopy">复制结果</button>
@@ -307,7 +307,7 @@
       </div>
 
       <div class="footer">
-        小提示：如果班次显示和你表格里不一致，可以在右侧手动微调再复制。
+        小提示：如果个别班次想写成 09:00 - 18:00，可以在右侧手动改完再复制。
       </div>
     </div>
   </div>
@@ -332,33 +332,34 @@
     statusEl.appendChild(span);
   }
 
-function splitRow(line) {
-  // 按任意空白（空格 / Tab）切，兼容性更高
-  return line
-    .trim()
-    .split(/\s+/)
-    .map((c) => c.trim())
-    .filter((c) => c.length > 0);
-}
-
+  // 按任意空白拆列，兼容 Tab / 多空格 / 单空格
+  function splitRow(line) {
+    return line
+      .trim()
+      .split(/\s+/)
+      .map(c => c.trim())
+      .filter(c => c.length > 0);
+  }
 
   function parseSchedule(raw, nameKeyword, monthHint) {
     const lines = raw
       .split(/\r?\n/)
-      .map((l) => l.trimEnd())
-      .filter((l) => l.trim().length > 0);
+      .map(l => l.trimEnd())
+      .filter(l => l.trim().length > 0);
 
     if (!lines.length) {
       throw new Error("请先在左侧粘贴从飞书复制的排班内容。");
     }
 
     const rows = lines.map(splitRow);
+
+    // 宽松日期正则：允许中间有空格
     const dateRegex = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/;
     const weekRegex = /星期[一二三四五六日天]/;
 
-    // 找到日期列起点
+    // 找日期所在最左列
     let startCol = null;
-    rows.forEach((row) => {
+    rows.forEach(row => {
       row.forEach((cell, idx) => {
         if (dateRegex.test(cell)) {
           if (startCol === null || idx < startCol) startCol = idx;
@@ -367,14 +368,15 @@ function splitRow(line) {
     });
 
     if (startCol === null) {
-      throw new Error("没有识别到“12月1日”这种格式的日期，请确认已包含日期行。");
+      throw new Error("没有识别到 12月1日 这种格式的日期，请确认已包含日期行。");
     }
 
-    const colCount = Math.max(...rows.map((r) => r.length));
+    const colCount = Math.max(...rows.map(r => r.length));
     const dates = new Array(colCount).fill("");
     const weeks = new Array(colCount).fill("");
 
-    rows.forEach((row) => {
+    // 填充日期 / 星期数组
+    rows.forEach(row => {
       for (let i = startCol; i < row.length; i++) {
         const cell = row[i].trim();
         if (dateRegex.test(cell)) dates[i] = cell;
@@ -382,20 +384,29 @@ function splitRow(line) {
       }
     });
 
-    // 找目标行：先按姓名关键字匹配，没有则默认最后一行
-    let targetRow = null;
+    // 选目标行：
+    // 1）若有姓名关键字且匹配到，则用匹配到的行
+    // 2）若有姓名关键字但没匹配到，则给一个轻微 warning，仍然用最后一行
+    // 3）若没填姓名关键字，默认用最后一行
+    let targetRowIndex = rows.length - 1;
+    let usedKeyword = false;
+
     if (nameKeyword) {
-      lines.forEach((line, idx) => {
-        if (line.includes(nameKeyword)) {
-          targetRow = rows[idx];
+      const keyword = nameKeyword.trim();
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes(keyword)) {
+          targetRowIndex = i;
+          usedKeyword = true;
+          break;
         }
-      });
-      if (!targetRow) {
-        throw new Error("没有在排班内容中找到包含该姓名关键字的行，可以尝试只填中文名或英文名的一部分。");
       }
-    } else {
-      targetRow = rows[rows.length - 1];
+      if (!usedKeyword) {
+        // 没找到就提示一下，但不报错
+        setStatus("没有找到包含该姓名关键字的行，已自动使用最后一行作为排班行。", "warn");
+      }
     }
+
+    const targetRow = rows[targetRowIndex];
 
     const resultLines = [];
     for (let i = startCol; i < targetRow.length; i++) {
@@ -404,10 +415,9 @@ function splitRow(line) {
 
       let date = dates[i];
       if (!date) {
-        // 如果缺失日期，用月份提示或“第N天”占位
-        if (monthHint && /^\d{1,2}$/.test(shift) === false) {
+        if (monthHint && monthHint.trim()) {
           const dayIndex = i - startCol + 1;
-          date = monthHint + "月" + dayIndex + "日";
+          date = monthHint.trim() + "月" + dayIndex + "日";
         } else {
           date = "第" + (i - startCol + 1) + "天";
         }
@@ -430,10 +440,12 @@ function splitRow(line) {
       const monthHint = monthHintInput.value.trim();
       const result = parseSchedule(raw, keyword, monthHint);
       outputText.value = result;
-      setStatus("解析完成，如果有需要可以在右侧手动微调后再复制。", "ok");
+      if (!statusEl.textContent) {
+        setStatus("解析完成，如有需要可以在右侧手动微调后再复制。", "ok");
+      }
     } catch (err) {
       console.error(err);
-      setStatus(err.message || "解析失败，可以检查一下粘贴内容是否包含日期行/星期行/排班行。", "error");
+      setStatus(err.message || "解析失败，可以检查粘贴内容是否包含日期行、星期行与排班行。", "error");
     }
   });
 
@@ -457,7 +469,7 @@ function splitRow(line) {
     outputText.value = "";
     nameKeywordInput.value = "";
     monthHintInput.value = "";
-    setStatus("已清空，你可以重新粘贴新的排班内容。", "ok");
+    setStatus("已清空，可以粘贴新的排班内容。", "ok");
   });
 </script>
 </body>
