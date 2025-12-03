@@ -187,6 +187,19 @@
       border-top: 1px solid rgba(55,65,81,0.7);
       line-height: 1.8;
     }
+    .compare-block {
+      margin-top: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(31,41,55,0.9);
+      padding: 8px;
+      background: rgba(15,23,42,0.7);
+    }
+    .compare-block label {
+      font-size: 12px;
+      color: #9ca3af;
+      display: block;
+      margin-bottom: 4px;
+    }
     @media(max-width:960px){
       .app-body { height: auto; }
       .mode.active { grid-template-columns: 1fr; position: static; }
@@ -252,22 +265,65 @@
       </div>
     </div>
 
-    <!-- 模式 2：班表对比 -->
+    <!-- 模式 2：班表对比（多人） -->
     <div class="mode" id="mode-compare">
       <div class="panel">
         <div class="panel-header">
-          <span>1. 粘贴两个人的飞书排班</span>
-          <span class="right">A：日期+时间；B：可只贴时间行</span>
+          <span>1. 粘贴多人排班</span>
+          <span class="right">第 1 人需要包含日期，其余可只贴时间行</span>
         </div>
-        <textarea id="inputA" class="input-area" placeholder="A 的排班（日期行 + 星期行 + A 的时间行）"></textarea>
+
         <div class="field-line">
-          <input id="nameA" type="text" placeholder="A 的名字（如 积宏）">
+          <span style="font-size:12px;color:#9ca3af;">对比人数</span>
+          <select id="compareCount">
+            <option value="2">2 人</option>
+            <option value="3">3 人</option>
+            <option value="4">4 人</option>
+          </select>
         </div>
-        <div style="height:8px;"></div>
-        <textarea id="inputB" class="input-area" placeholder="B 的排班（可只贴时间行：9:00 9:00 15:00 ...）"></textarea>
-        <div class="field-line">
-          <input id="nameB" type="text" placeholder="B 的名字（如 Dora）">
+
+        <div id="compareInputs">
+          <div class="compare-block" data-index="1">
+            <label>成员 1（作为参考：必须包含日期行 + 星期行 + 时间行）</label>
+            <textarea id="cmpInput1" class="input-area" style="height:90px;"
+              placeholder="成员 1 的排班（日期行 + 星期行 + 时间行）"
+            ></textarea>
+            <div class="field-line">
+              <input id="cmpName1" type="text" placeholder="成员 1 名字（如 积宏）">
+            </div>
+          </div>
+
+          <div class="compare-block" data-index="2">
+            <label>成员 2（可只粘贴时间行：9:00 9:00 15:00 ...）</label>
+            <textarea id="cmpInput2" class="input-area" style="height:90px;"
+              placeholder="成员 2 的排班（可只有时间行）"
+            ></textarea>
+            <div class="field-line">
+              <input id="cmpName2" type="text" placeholder="成员 2 名字">
+            </div>
+          </div>
+
+          <div class="compare-block" data-index="3" style="display:none;">
+            <label>成员 3（可只粘贴时间行：9:00 9:00 15:00 ...）</label>
+            <textarea id="cmpInput3" class="input-area" style="height:90px;"
+              placeholder="成员 3 的排班（可只有时间行）"
+            ></textarea>
+            <div class="field-line">
+              <input id="cmpName3" type="text" placeholder="成员 3 名字">
+            </div>
+          </div>
+
+          <div class="compare-block" data-index="4" style="display:none;">
+            <label>成员 4（可只粘贴时间行：9:00 9:00 15:00 ...）</label>
+            <textarea id="cmpInput4" class="input-area" style="height:90px;"
+              placeholder="成员 4 的排班（可只有时间行）"
+            ></textarea>
+            <div class="field-line">
+              <input id="cmpName4" type="text" placeholder="成员 4 名字">
+            </div>
+          </div>
         </div>
+
         <div style="margin-top:8px;">
           <button class="btn" id="btnClear2">清空</button>
           <button class="btn btn-primary" id="btnCompare">生成对比</button>
@@ -277,32 +333,33 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span>2. 两人的共同上班时间</span>
-          <span class="right">按天统计同班次</span>
+          <span>2. 共同上班统计</span>
+          <span class="right">统计所有人都上班 / 同班次的日期</span>
         </div>
         <textarea id="outputCompare" class="output-area"
-          placeholder="示例：&#10;两人都上班的日期：12 天&#10;两人同班次上班的日期：7 天&#10;&#10;同班次上班的具体日期如下：&#10;&#10;12月3日（星期三），白班 09:00 - 18:00&#10;..."
+          placeholder="示例：&#10;本次对比人数：3 人&#10;所有人都上班的日期：15 天&#10;所有人同班次上班的日期：9 天&#10;&#10;同班次上班的具体日期如下：&#10;&#10;12月3日（星期三），白班 09:00 - 18:00&#10;..."
         ></textarea>
       </div>
     </div>
 
-    <!-- 模式 3：班次查人 -->
+    <!-- 模式 3：班次查人（多日期 + 下拉选日期） -->
     <div class="mode" id="mode-shiftpeople">
       <div class="panel">
         <div class="panel-header">
-          <span>1. 粘贴直列的人员 + 当天时间</span>
-          <span class="right">姓名必须为「中英混合」格式</span>
+          <span>1. 粘贴直列的人员 + 多天时间</span>
+          <span class="right">上面是姓名列表，下面是多天的日期 + 时间</span>
         </div>
         <textarea id="inputRaw3" class="input-area"
-          placeholder="例如：&#10;（上面）很多行姓名，每行一个人，如 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei&#10;...&#10;12月4日&#10;星期四&#10;9:00&#10;15:00&#10;OFF&#10;9:00&#10;...&#10;（人数顺序与时间顺序一一对应）"
+          placeholder="例如：&#10;(一大串姓名，每行一个，格式为中英混合：Derrick Chin 陈伟聪 / 梅志豪 Orien Mei...)&#10;...&#10;12月4日&#10;星期四&#10;9:00&#10;15:00&#10;9:00&#10;16:00&#10;OFF&#10;...&#10;12月5日&#10;星期五&#10;...&#10;（可包含整个月多天）"
         ></textarea>
         <div class="field-line">
-          <input id="dateOverride" type="text" placeholder="可选：手动填 日期 如 12月4日">
-          <input id="weekOverride" type="text" placeholder="可选：手动填 星期 如 星期四">
+          <select id="dateSelect3">
+            <option value="">请选择日期</option>
+          </select>
         </div>
         <div style="margin-top:8px;">
           <button class="btn" id="btnClear3">清空</button>
-          <button class="btn btn-primary" id="btnShiftPeople">生成班次人员列表</button>
+          <button class="btn btn-primary" id="btnShiftPeople">解析 / 刷新日期列表</button>
         </div>
         <div class="status" id="status3"></div>
       </div>
@@ -310,10 +367,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>2. 各班次对应的人员</span>
-          <span class="right">自动过滤类似 - 白9:00 的行</span>
+          <span class="right">选择日期后自动展示</span>
         </div>
         <textarea id="outputText3" class="output-area"
-          placeholder="这里会按班次显示人员，例如：&#10;白班 09:00 - 18:00（共 X 人）：&#10;- Derrick Chin 陈伟聪&#10;- 梅志豪 Orien Mei..."
+          placeholder="选择某一天后，这里会按班次显示人员，例如：&#10;12月4日（星期四）各班次人员&#10;白班 09:00 - 18:00（共 X 人）：&#10;- Derrick Chin 陈伟聪&#10;- 梅志豪 Orien Mei..."
         ></textarea>
         <div class="stats" id="stats3"></div>
       </div>
@@ -348,10 +405,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>2. 查询结果</span>
-          <span class="right">指定日期 + 代码 → 谁是这个班次 / 代码</span>
+          <span class="right">指定日期 + 代码 → 谁是这个代码 / 班次</span>
         </div>
         <textarea id="outputText4" class="output-area"
-          placeholder="解析后，可选择某一天 + 某个代码或时间（如 9:00、MC、OFF），这里会显示当天该代码对应的所有人员名单。"
+          placeholder="解析后，可选择某一天 + 某个代码或时间（如 9:00、MC、OFF），这里会显示当天该代码对应的所有人员名单。不会再把 12月12日 这种日期当成代码。"
         ></textarea>
       </div>
     </div>
@@ -364,7 +421,7 @@
           <span class="right">姓名列需为中英混合姓名</span>
         </div>
         <textarea id="inputRaw5" class="input-area"
-          placeholder="同上：姓名 + 日期列。整页复制后贴进来，例如要统计整个月 MC 出现次数。姓名必须类似 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei。"
+          placeholder="同上：姓名 + 日期列。整页复制后贴进来，例如要统计整个月 MC 的次数。姓名必须类似 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei。"
         ></textarea>
         <div class="field-line">
           <input id="codeInput5" type="text" placeholder="统计的代码（默认 MC）">
@@ -398,7 +455,6 @@
     const s = line.trim();
     if (!s) return false;
     const clean = s.replace(/^[-•·\s]+/, "");
-    // 明显是时间/数字/代码的排除
     if (/^\d{1,2}:\d{2}$/.test(clean)) return false;
     if (/^\d+(\.\d+)?$/.test(clean)) return false;
     if (/^\d/.test(clean)) return false;
@@ -420,6 +476,36 @@
     REST: "休息"
   };
 
+  const CODE_WHITELIST = new Set([
+    "TRAINING","SUPPORT","BUDDY","PRACTICAL",
+    "AL","M-AL-1H","M-AL-2H","A-AL-1H","A-AL-2H",
+    "N-AL-1H","N-AL-2H","MN-AL-1H","MN-AL-2H",
+    "MC","M-MC-1H","M-MC-2H","A-MC-1H","A-MC-2H",
+    "N-MC-1H","N-MC-2H","MN-MC-1H","MN-MC-2H",
+    "UPL","M-UPL-1H","M-UPL-2H","A-UPL-1H","A-UPL-2H",
+    "N-UPL-1H","N-UPL-2H","MN-UPL-1H","MN-UPL-2H",
+    "PCU","M-PCU-1H","M-PCU-2H","A-PCU-1H","A-PCU-2H",
+    "N-PCU-1H","N-PCU-2H","MN-PCU-1H","MN-PCU-2H",
+    "PH","MT","PL","ML","CL","HOSP",
+    "AWOL","M-AWOL-1H","M-AWOL-2H","A-AWOL-1H","A-AWOL-2H",
+    "N-AWOL-1H","N-AWOL-2H","MN-AWOL-1H","MN-AWOL-2H",
+    "GL","M-GL-1H","M-GL-2H","A-GL-1H","A-GL-2H",
+    "N-GL-1H","N-GL-2H","MN-GL-1H","MN-GL-2H",
+    "RESIGN","OFF","REST"
+  ]);
+
+  function isTimeToken(s) {
+    return /^\d{1,2}:\d{2}(\s*-\s*\d{1,2}:\d{2})?$/.test(s);
+  }
+  function isCodeOrShiftToken(s) {
+    const t = s.trim();
+    if (!t) return false;
+    if (t.includes("月") || t.includes("日")) return false;
+    if (isTimeToken(t)) return true;
+    if (CODE_WHITELIST.has(t.toUpperCase())) return true;
+    return false;
+  }
+
   function splitRow(line) {
     return line.trim().split(/\s+/).filter(Boolean);
   }
@@ -427,7 +513,6 @@
     return ["ZAOZAO","BAI","ZHONG","WAN","WANWAN","YE"].includes(key);
   }
 
-  // 班次分类
   function classifyShift(rawShift, stats) {
     const s = rawShift.trim().toUpperCase();
     if (!s) return null;
@@ -443,7 +528,7 @@
 
     const m = s.match(/^(\d{1,2}):(\d{2})$/);
     if (m) {
-      const h = parseInt(m[1], 10);
+      const h  = parseInt(m[1], 10);
       const mm = parseInt(m[2], 10);
       if (mm === 0) {
         if (h === 8)  { stats.zaozao++; return "ZAOZAO"; }
@@ -457,7 +542,6 @@
     return null;
   }
 
-  // 9:00 -> 09:00 - 18:00
   function formatShift(rawShift) {
     const s = rawShift.trim();
     const m = s.match(/^(\d{1,2}):(\d{2})$/);
@@ -472,7 +556,6 @@
     return `${pad(startHour)}:${pad(minute)} - ${pad(displayEndHour)}:${pad(minute)}`;
   }
 
-  // 解析：一行日期 + 一行星期 + 一行时间
   function parseFeishuSchedule(raw, monthHint) {
     const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (!lines.length) throw new Error("请先粘贴排班内容");
@@ -539,12 +622,12 @@
 
       const timeMatch = rawShift.match(/^(\d{1,2}):(\d{2})$/);
       if (timeMatch && isWorkType(typeKey) && monthHint && dayNum) {
-        const startHour = parseInt(timeMatch[1], 10);
+        const startHour   = parseInt(timeMatch[1], 10);
         const startMinute = parseInt(timeMatch[2], 10);
-        const added = startHour + 9;
-        const endHour24 = added % 24;
-        const endHour = (added >= 24 && endHour24 === 0) ? 24 : endHour24;
-        const endMinute = startMinute;
+        const added       = startHour + 9;
+        const endHour24   = added % 24;
+        const endHour     = (added >= 24 && endHour24 === 0) ? 24 : endHour24;
+        const endMinute   = startMinute;
         events.push({ day: dayNum, startHour, startMinute, endHour, endMinute, typeKey });
       }
     }
@@ -556,14 +639,14 @@
     return { entries, stats, events };
   }
 
-  // 只给时间行：复用 A 的日期/星期
+  // B 只给时间：复用 A 的日期
   function parseTimesOnly(raw, refEntries) {
     const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    if (!lines.length) throw new Error("B 的排班内容为空");
+    if (!lines.length) throw new Error("排班内容为空");
 
     const lastLine = lines[lines.length - 1];
     const tokens = splitRow(lastLine);
-    if (!tokens.length) throw new Error("B 的时间行为空");
+    if (!tokens.length) throw new Error("时间行为空");
 
     const entries = [];
     for (let i = 0; i < refEntries.length && i < tokens.length; i++) {
@@ -588,7 +671,7 @@
     return entries;
   }
 
-  // 解析整页排班表（多行：姓名 + 各天代码）
+  // 解析整页排班（多行姓名 + 日期列）
   function parseFullSheet(raw) {
     const lines = raw.split(/\r?\n/).map(l => l.replace(/\s+$/,"")).filter(l => l !== "");
     if (!lines.length) throw new Error("请先粘贴整页排班内容");
@@ -622,6 +705,7 @@
         break;
       }
     }
+
     const dateRow = rows[dateRowIndex];
     const days = [];
     const dayToLabel = {};
@@ -654,8 +738,6 @@
 
       const nameParts = row.slice(0, startCol).map(c => c.trim()).filter(Boolean);
       const name = nameParts.join(" ").trim();
-
-      // 只接受“中英混合姓名”行
       if (!name || !isNameLine(name)) continue;
 
       const codes = {};
@@ -674,7 +756,6 @@
     return { days, dayToLabel, staffRows };
   }
 
-  // ICS
   function buildICS(events, year, month, name) {
     const now = new Date();
     const dtstamp =
@@ -716,11 +797,11 @@
   // Tab 切换
   const tabBtns = document.querySelectorAll(".tab-btn");
   const modes = {
-    single: document.getElementById("mode-single"),
-    compare: document.getElementById("mode-compare"),
-    shiftpeople: document.getElementById("mode-shiftpeople"),
-    codebyday: document.getElementById("mode-codebyday"),
-    codestats: document.getElementById("mode-codestats")
+    single:     document.getElementById("mode-single"),
+    compare:    document.getElementById("mode-compare"),
+    shiftpeople:document.getElementById("mode-shiftpeople"),
+    codebyday:  document.getElementById("mode-codebyday"),
+    codestats:  document.getElementById("mode-codestats")
   };
   tabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -732,7 +813,7 @@
     });
   });
 
-  // ---------- 模式 1：单人 ----------
+  // ---------- 模式 1 ----------
   const inputRaw1 = document.getElementById("inputRaw1");
   const outputText1 = document.getElementById("outputText1");
   const titleInput1 = document.getElementById("titleInput1");
@@ -823,7 +904,8 @@
     const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = filename;
+    a.href   = url;
+    a.download = filename;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     setStatus1("已下载 TXT", "ok");
@@ -853,186 +935,262 @@
     setStatus1("已清空", "ok");
   };
 
-  // ---------- 模式 2：对比 ----------
-  const inputA = document.getElementById("inputA");
-  const inputB = document.getElementById("inputB");
-  const nameAEl = document.getElementById("nameA");
-  const nameBEl = document.getElementById("nameB");
-  const status2 = document.getElementById("status2");
-  const outputCompare = document.getElementById("outputCompare");
-  const btnClear2 = document.getElementById("btnClear2");
-  const btnCompare = document.getElementById("btnCompare");
+  // ---------- 模式 2：多人对比 ----------
+  const compareCountSelect = document.getElementById("compareCount");
+  const compareInputs       = document.getElementById("compareInputs");
+  const status2             = document.getElementById("status2");
+  const outputCompare       = document.getElementById("outputCompare");
+  const btnCompare          = document.getElementById("btnCompare");
+  const btnClear2           = document.getElementById("btnClear2");
+
   function setStatus2(text,type){ if(!text){status2.innerHTML="";return;} const cls=type==="ok"?"ok":type==="error"?"error":""; status2.innerHTML=`<span class="${cls}">${text}</span>`;}
+
+  function refreshCompareBlocks() {
+    const n = parseInt(compareCountSelect.value, 10) || 2;
+    const blocks = compareInputs.querySelectorAll(".compare-block");
+    blocks.forEach((b,idx)=>{
+      b.style.display = idx < n ? "" : "none";
+    });
+  }
+  compareCountSelect.addEventListener("change", refreshCompareBlocks);
+  refreshCompareBlocks();
 
   btnCompare.onclick = () => {
     try {
-      const rawA = inputA.value;
-      const rawB = inputB.value;
-      if (!rawA.trim() || !rawB.trim()) {
-        throw new Error("请分别粘贴 A 和 B 的排班内容");
+      const n = parseInt(compareCountSelect.value, 10) || 2;
+      const rawArr  = [];
+      const nameArr = [];
+      for (let i=1;i<=n;i++){
+        const raw  = document.getElementById(`cmpInput${i}`).value.trim();
+        const name = document.getElementById(`cmpName${i}`).value.trim() || `成员${i}`;
+        if (!raw) throw new Error(`请先粘贴成员 ${i} 的排班内容`);
+        rawArr.push(raw);
+        nameArr.push(name);
       }
-      const month = parseInt(monthSelect1.value, 10) || null;
+      const month = parseInt(monthSelect1.value,10) || null;
 
-      // A：完整解析
-      const parsedA = parseFeishuSchedule(rawA, month);
-      const entriesA = parsedA.entries;
+      // 第一个成员：完整解析
+      const parsed0  = parseFeishuSchedule(rawArr[0], month);
+      const refEntries = parsed0.entries;
+      const maps = [];
+      maps.push(new Map());
+      refEntries.forEach(e=>{ if(e.dayNum!=null) maps[0].set(e.dayNum,e); });
 
-      // B：优先尝试完整解析，如果没有日期则视为“只贴时间行”
-      let entriesB;
-      try {
-        entriesB = parseFeishuSchedule(rawB, month).entries;
-      } catch (e) {
-        if ((e.message || "").includes("未识别到日期行")) {
-          entriesB = parseTimesOnly(rawB, entriesA);
-        } else {
-          throw e;
+      // 其余成员
+      for(let i=1;i<n;i++){
+        const raw = rawArr[i];
+        let entries;
+        try{
+          entries = parseFeishuSchedule(raw, month).entries;
+        }catch(e){
+          if((e.message||"").includes("未识别到日期行")){
+            entries = parseTimesOnly(raw, refEntries);
+          }else{
+            throw new Error(`成员 ${i+1} 的排班解析失败：`+e.message);
+          }
         }
+        const m = new Map();
+        entries.forEach(e=>{ if(e.dayNum!=null) m.set(e.dayNum,e); });
+        maps.push(m);
       }
 
-      const mapA = new Map();
-      const mapB = new Map();
-      entriesA.forEach(e => { if (e.dayNum != null) mapA.set(e.dayNum, e); });
-      entriesB.forEach(e => { if (e.dayNum != null) mapB.set(e.dayNum, e); });
+      // 求所有人都存在的日期
+      let commonDays = Array.from(maps[0].keys());
+      for(let i=1;i<n;i++){
+        const keys = new Set(maps[i].keys());
+        commonDays = commonDays.filter(d=>keys.has(d));
+      }
+      commonDays.sort((a,b)=>a-b);
 
-      const days = Array.from(mapA.keys()).filter(d => mapB.has(d)).sort((a,b)=>a-b);
-      let bothWork = 0;
-      let sameShift = 0;
+      let allWorkCount = 0;
+      let sameShiftCount = 0;
       const detailLines = [];
-      const nameA = nameAEl.value.trim() || "A";
-      const nameB = nameBEl.value.trim() || "B";
 
-      days.forEach(day => {
-        const ea = mapA.get(day);
-        const eb = mapB.get(day);
-        const aWork = isWorkType(ea.typeKey);
-        const bWork = isWorkType(eb.typeKey);
-        if (aWork && bWork) bothWork++;
-        if (aWork && bWork && ea.typeKey === eb.typeKey) {
-          sameShift++;
-          const w = ea.weekStr ? `（${ea.weekStr}）` : "";
-          const shiftName = TYPE_NAME[ea.typeKey] || "";
-          detailLines.push(`${ea.dateStr}${w}，${shiftName} ${ea.displayShift}`);
+      commonDays.forEach(day=>{
+        const entries = maps.map(m=>m.get(day));
+        const allWork = entries.every(e=>isWorkType(e.typeKey));
+        if (allWork) allWorkCount++;
+        const first = entries[0];
+        const sameShift = allWork && entries.every(e=>e.typeKey===first.typeKey);
+        if (sameShift){
+          sameShiftCount++;
+          const w = first.weekStr ? `（${first.weekStr}）` : "";
+          const shiftName = TYPE_NAME[first.typeKey] || "";
+          detailLines.push(`${first.dateStr}${w}，${shiftName} ${first.displayShift}`);
         }
       });
 
       let summary =
-        `两人都上班的日期：${bothWork} 天\n` +
-        `两人同班次上班的日期：${sameShift} 天\n\n`;
+        `本次对比人数：${n} 人\n` +
+        `所有人都上班的日期：${allWorkCount} 天\n` +
+        `所有人同班次上班的日期：${sameShiftCount} 天\n\n`;
 
       if (!detailLines.length) {
-        summary += "目前没有找到两人「同班次」上班的日期。";
+        summary += "目前没有找到「所有人同班次」上班的日期。";
       } else {
         summary += "同班次上班的具体日期如下：\n\n" + detailLines.join("\n");
       }
 
       outputCompare.value = summary;
-      setStatus2("已生成对比结果", "ok");
-    } catch (e) {
-      outputCompare.value = "";
-      setStatus2(e.message || "对比失败", "error");
+      setStatus2("已生成对比结果","ok");
+    } catch(e){
+      outputCompare.value="";
+      setStatus2(e.message||"对比失败","error");
     }
   };
 
   btnClear2.onclick=()=>{
-    inputA.value=""; inputB.value=""; outputCompare.value="";
-    nameAEl.value=""; nameBEl.value="";
+    for(let i=1;i<=4;i++){
+      const t=document.getElementById(`cmpInput${i}`); if(t) t.value="";
+      const n=document.getElementById(`cmpName${i}`);  if(n) n.value="";
+    }
+    outputCompare.value="";
     setStatus2("已清空","ok");
   };
 
-  // ---------- 模式 3：班次查人 ----------
-  const inputRaw3 = document.getElementById("inputRaw3");
-  const dateOverride = document.getElementById("dateOverride");
-  const weekOverride = document.getElementById("weekOverride");
-  const status3 = document.getElementById("status3");
+  // ---------- 模式 3：班次查人（多日期） ----------
+  const inputRaw3   = document.getElementById("inputRaw3");
+  const dateSelect3 = document.getElementById("dateSelect3");
+  const status3     = document.getElementById("status3");
   const outputText3 = document.getElementById("outputText3");
-  const stats3 = document.getElementById("stats3");
-  const btnClear3 = document.getElementById("btnClear3");
+  const stats3      = document.getElementById("stats3");
+  const btnClear3   = document.getElementById("btnClear3");
   const btnShiftPeople = document.getElementById("btnShiftPeople");
   function setStatus3(t,type){if(!t){status3.innerHTML="";return;}const c=type==="ok"?"ok":type==="error"?"error":"";status3.innerHTML=`<span class="${c}">${t}</span>`;}
 
-  btnShiftPeople.onclick=()=>{
-    try{
-      const raw=inputRaw3.value;
-      const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-      if(!lines.length) throw new Error("请先粘贴内容");
-      const dateRe=/(\d{1,2})\s*月\s*(\d{1,2})\s*日/;
-      const weekRe=/星期[一二三四五六日天]/;
+  let shiftPeopleData = null; // { names:[], blocks:[{date, week, tokens:[]}] }
 
-      const dateIdx=lines.findIndex(l=>dateRe.test(l));
-      if(dateIdx===-1) throw new Error("未找到日期行（例如 12月4日）");
+  function parseShiftPeopleStructure(raw){
+    const lines = raw.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+    if(!lines.length) throw new Error("请先粘贴内容");
+    const dateRe=/(\d{1,2})\s*月\s*(\d{1,2})\s*日/;
+    const weekRe=/星期[一二三四五六日天]/;
 
-      let dateLabel=dateOverride.value.trim()||lines[dateIdx];
-      const weekLine=(lines[dateIdx+1]&&weekRe.test(lines[dateIdx+1]))?lines[dateIdx+1]:"";
-      let weekLabel=weekOverride.value.trim()||weekLine;
+    const dateIdxs=[];
+    lines.forEach((l,idx)=>{ if(dateRe.test(l)) dateIdxs.push(idx); });
+    if(!dateIdxs.length) throw new Error("未找到任何日期行（例如 12月4日）");
 
-      const rawNameLines=lines.slice(0,dateIdx);
-      const ignoreKeys=["班表","IM号","大客户经理","吉隆坡","支援","支援账户组","VIP"];
+    const firstDateIdx = dateIdxs[0];
 
-      const names=rawNameLines.filter(l=>{
-        if(!l) return false;
-        if(ignoreKeys.some(k=>l.includes(k))) return false;
-        return isNameLine(l);
-      });
-      if(!names.length) throw new Error("未识别到姓名，请确认上半部分是姓名列表（中英混合，例如 Derrick Chin 陈伟聪）");
+    // 姓名在最前面
+    const rawNameLines = lines.slice(0, firstDateIdx);
+    const ignoreKeys=["班表","IM号","大客户经理","吉隆坡","支援","支援账户组","VIP"];
+    const names = rawNameLines.filter(l=>{
+      if(!l) return false;
+      if(ignoreKeys.some(k=>l.includes(k))) return false;
+      return isNameLine(l);
+    });
+    if(!names.length) throw new Error("未识别到姓名，请确认上半部分是姓名列表（中英混合，例如 Derrick Chin 陈伟聪）");
 
-      const afterIdx=weekLine?dateIdx+2:dateIdx+1;
+    const blocks=[];
+    for(let i=0;i<dateIdxs.length;i++){
+      const idx = dateIdxs[i];
+      const next = (i+1<dateIdxs.length? dateIdxs[i+1] : lines.length);
+      const dateLabel = lines[idx];
+      let ptr = idx+1;
+      let weekLabel = "";
+      if(ptr<next && weekRe.test(lines[ptr])){
+        weekLabel = lines[ptr];
+        ptr++;
+      }
       const timeTokens=[];
-      for(let i=afterIdx;i<lines.length;i++){
-        const parts=lines[i].split(/\s+/);
+      for(let j=ptr;j<next;j++){
+        const parts = lines[j].split(/\s+/);
         parts.forEach(tok=>{
-          const t=tok.trim().toUpperCase();
+          const t = tok.trim().toUpperCase();
           if(!t) return;
-          if(/^\d{1,2}:\d{2}$/.test(t)||t==="AL"||t==="OFF"||t==="REST"){
+          if(/^\d{1,2}:\d{2}$/.test(t) || t==="AL" || t==="OFF" || t==="REST"){
             timeTokens.push(t);
           }
         });
       }
-      if(!timeTokens.length) throw new Error("未识别到时间/班次（如 9:00 / 15:00 / AL / OFF）");
+      blocks.push({date:dateLabel, week:weekLabel, tokens:timeTokens});
+    }
+    if(!blocks.length) throw new Error("未识别到任何日期对应的时间/班次");
+    return {names, blocks};
+  }
 
-      const count=Math.min(names.length,timeTokens.length);
-      const stats={
-        zaozao:0,bai:0,zhong:0,wan:0,wanwan:0,ye:0,
-        nianjia:0,rest:0,chuqin:0
-      };
-      const groups={ZAOZAO:[],BAI:[],ZHONG:[],WAN:[],WANWAN:[],YE:[],NIANJIA:[],REST:[]};
+  function renderShiftPeopleForSelected(){
+    if(!shiftPeopleData) return;
+    const sel = dateSelect3.value;
+    if(!sel){ outputText3.value=""; stats3.innerHTML=""; return; }
+    const block = shiftPeopleData.blocks.find(b=>b.date===sel);
+    if(!block){ outputText3.value=""; stats3.innerHTML=""; return; }
 
-      for(let i=0;i<count;i++){
-        const name=names[i];
-        const rawShift=timeTokens[i];
-        const typeKey=classifyShift(rawShift,stats);
-        if(!typeKey) continue;
-        groups[typeKey].push({name,rawShift});
+    const names = shiftPeopleData.names;
+    const tokens = block.tokens;
+    const count  = Math.min(names.length, tokens.length);
+
+    const stats={
+      zaozao:0,bai:0,zhong:0,wan:0,wanwan:0,ye:0,
+      nianjia:0,rest:0,chuqin:0
+    };
+    const groups={ZAOZAO:[],BAI:[],ZHONG:[],WAN:[],WANWAN:[],YE:[],NIANJIA:[],REST:[]};
+
+    for(let i=0;i<count;i++){
+      const name=names[i];
+      const rawShift=tokens[i];
+      const typeKey=classifyShift(rawShift,stats);
+      if(!typeKey) continue;
+      groups[typeKey].push({name,rawShift});
+    }
+    stats.chuqin=stats.zaozao+stats.bai+stats.zhong+stats.wan+stats.wanwan+stats.ye;
+
+    const order=["ZAOZAO","BAI","ZHONG","WAN","WANWAN","YE","NIANJIA","REST"];
+    const out=[];
+    const headerWeek = block.week ? `（${block.week}）` : "";
+    out.push(`${block.date}${headerWeek}各班次人员\n`);
+    order.forEach(key=>{
+      const arr=groups[key];
+      if(!arr||!arr.length) return;
+      const label=TYPE_NAME[key]||key;
+      let title=label;
+      if(isWorkType(key)){
+        const first=arr[0].rawShift;
+        title += " " + formatShift(first);
       }
-      stats.chuqin=stats.zaozao+stats.bai+stats.zhong+stats.wan+stats.wanwan+stats.ye;
+      out.push(`${title}（共 ${arr.length} 人）：`);
+      arr.forEach(item=>{ out.push(`- ${item.name}`); });
+      out.push("");
+    });
+    outputText3.value = out.join("\n");
+    updateStatsBox(stats,stats3);
+  }
 
-      const order=["ZAOZAO","BAI","ZHONG","WAN","WANWAN","YE","NIANJIA","REST"];
-      const out=[];
-      const headerWeek=weekLabel?`（${weekLabel}）`:"";
-      out.push(`${dateLabel}${headerWeek}各班次人员\n`);
-      order.forEach(key=>{
-        const arr=groups[key];
-        if(!arr||!arr.length) return;
-        const label=TYPE_NAME[key]||key;
-        let title=label;
-        if(isWorkType(key)){
-          const first=arr[0].rawShift;
-          title+= " " + formatShift(first);
-        }
-        out.push(`${title}（共 ${arr.length} 人）：`);
-        arr.forEach(item=>{ out.push(`- ${item.name}`); });
-        out.push("");
+  btnShiftPeople.onclick=()=>{
+    try{
+      const raw = inputRaw3.value;
+      shiftPeopleData = parseShiftPeopleStructure(raw);
+      dateSelect3.innerHTML='<option value="">请选择日期</option>';
+      shiftPeopleData.blocks.forEach(b=>{
+        const opt=document.createElement("option");
+        opt.value=b.date;
+        opt.textContent=b.date;
+        dateSelect3.appendChild(opt);
       });
-      outputText3.value=out.join("\n");
-      updateStatsBox(stats,stats3);
-      setStatus3("已生成班次人员列表","ok");
+      if(shiftPeopleData.blocks.length===1){
+        dateSelect3.value=shiftPeopleData.blocks[0].date;
+        renderShiftPeopleForSelected();
+      }else{
+        outputText3.value="";
+        stats3.innerHTML="";
+      }
+      setStatus3("解析完成，请从下拉选择日期","ok");
     }catch(e){
+      shiftPeopleData=null;
+      dateSelect3.innerHTML='<option value="">请选择日期</option>';
       outputText3.value=""; stats3.innerHTML="";
-      setStatus3(e.message||"生成失败","error");
+      setStatus3(e.message||"解析失败","error");
     }
   };
+
+  dateSelect3.onchange = renderShiftPeopleForSelected;
+
   btnClear3.onclick=()=>{
-    inputRaw3.value=""; outputText3.value=""; stats3.innerHTML="";
-    dateOverride.value=""; weekOverride.value="";
+    inputRaw3.value="";
+    dateSelect3.innerHTML='<option value="">请选择日期</option>';
+    outputText3.value=""; stats3.innerHTML="";
+    shiftPeopleData=null;
     setStatus3("已清空","ok");
   };
 
@@ -1052,7 +1210,6 @@
     try{
       const raw=inputRaw4.value;
       sheet4=parseFullSheet(raw);
-      // 日期下拉
       daySelect4.innerHTML='<option value="">请选择日期</option>';
       sheet4.days.forEach(d=>{
         const opt=document.createElement("option");
@@ -1079,7 +1236,11 @@
     const set=new Set();
     sheet4.staffRows.forEach(r=>{
       const v=r.codes[day];
-      if(v && v.trim()!=="") set.add(v.trim());
+      if(!v) return;
+      const t=v.trim();
+      if(!t) return;
+      if(!isCodeOrShiftToken(t)) return;
+      set.add(t);
     });
     const list=Array.from(set).sort();
     codeSelect4.innerHTML='<option value="">请选择代码 / 班次</option>';
@@ -1160,7 +1321,7 @@
       text+=`共有 ${list.length} 人出现过该代码，总次数 ${total} 次。\n\n`;
       if(!list.length){
         text+="当前表格中未找到该代码。";
-     }else{
+      }else{
         list.forEach(([name,c])=>{
           text+=`- ${name}：${code} ${c} 次\n`;
         });
