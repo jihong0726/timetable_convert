@@ -148,7 +148,8 @@
       white-space: nowrap;
     }
 
-    .field-group input {
+    .field-group input,
+    .field-group select {
       border-radius: 999px;
       border: 1px solid rgba(55, 65, 81, 0.9);
       padding: 4px 8px;
@@ -247,7 +248,7 @@
     <div>
       <div class="title">飞书排班 → 文本生成器</div>
       <div class="subtitle">
-        从飞书或表格复制日期行 + 星期行 + 个人排班行，粘贴后一键生成文字版时间表
+        从飞书或表格复制日期行 + 星期行 + 个人排班行，粘贴后一键生成文字版时间表（含班次模板）
       </div>
     </div>
     <div class="badge">本地解析 · 适合 GitHub Pages</div>
@@ -258,23 +259,31 @@
     <div class="panel">
       <div class="panel-header">
         <span>1. 粘贴从飞书复制的排班内容</span>
-        <small>建议选择：日期行 + 星期行 + 你的排班行</small>
+        <small>可以是：日期行 + 星期行 + 班次行（或仅日期行 + 班次行）</small>
       </div>
       <textarea
         id="inputRaw"
         class="input-area"
-        placeholder="示例用法&#10;- 在飞书中选中 3 行：日期行、星期行、你的排班行&#10;- 复制后直接粘贴到这里&#10;&#10;例：&#10;12月1日  12月2日  12月3日 ...&#10;星期一   星期二   星期三  ...&#10;OFF  REST  9:00  9:00  ..."
+        placeholder="示例用法&#10;- 在飞书中选中 2 或 3 行：日期行、（可选）星期行、你的排班行&#10;- 复制后直接粘贴到这里&#10;&#10;例：&#10;12月1日  12月2日  12月3日 ...&#10;星期一   星期二   星期三  ...&#10;OFF  REST  9:00  9:00  ..."
       ></textarea>
 
       <div class="controls">
         <div class="left-controls">
           <div class="field-group">
-            <label for="nameKeyword">姓名关键字</label>
-            <input id="nameKeyword" type="text" placeholder="可留空，默认使用最后一行" />
+            <label for="titleInput">标题名称</label>
+            <input id="titleInput" type="text" placeholder="如 积宏 / Dora，可留空" />
           </div>
           <div class="field-group">
-            <label for="monthHint">月份提示</label>
-            <input id="monthHint" type="text" placeholder="一般可留空" />
+            <label for="yearSelect">年份</label>
+            <select id="yearSelect"></select>
+          </div>
+          <div class="field-group">
+            <label for="monthSelect">月份</label>
+            <select id="monthSelect"></select>
+          </div>
+          <div class="field-group">
+            <label for="nameKeyword">姓名关键字</label>
+            <input id="nameKeyword" type="text" placeholder="可留空，默认用最后一行" />
           </div>
         </div>
         <div class="btn-row">
@@ -294,12 +303,12 @@
       <textarea
         id="outputText"
         class="output-area"
-        placeholder="点击左侧生成时间表，这里会自动生成：&#10;12月1日（星期一）：OFF&#10;12月2日（星期二）：REST&#10;..."
+        placeholder="示例输出：&#10;积宏的 2025 年 12 月时间表&#10;12月1日（星期一）：09:00 - 18:00&#10;12月2日（星期二）：REST&#10;..."
       ></textarea>
 
       <div class="controls">
         <div class="left-controls">
-          <span style="font-size:11px;color:#6b7280;">规则：空白单元格会被自动忽略，只保留有班次或备注的日期。</span>
+          <span style="font-size:11px;color:#6b7280;">规则：空白单元格会被自动忽略，只保留有班次或备注的日期；部分时间会自动展开为完整时段。</span>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" id="btnCopy">复制结果</button>
@@ -307,7 +316,7 @@
       </div>
 
       <div class="footer">
-        小提示：如果个别班次想写成 09:00 - 18:00，可以在右侧手动改完再复制。
+        小提示：如果你的班次时间和模板不一样，可以在右侧手动改完再复制，或之后再调整模板表。
       </div>
     </div>
   </div>
@@ -316,12 +325,15 @@
 <script>
   const inputRaw = document.getElementById("inputRaw");
   const nameKeywordInput = document.getElementById("nameKeyword");
-  const monthHintInput = document.getElementById("monthHint");
   const outputText = document.getElementById("outputText");
   const statusEl = document.getElementById("status");
   const btnParse = document.getElementById("btnParse");
   const btnCopy = document.getElementById("btnCopy");
   const btnClear = document.getElementById("btnClear");
+
+  const titleInput = document.getElementById("titleInput");
+  const yearSelect = document.getElementById("yearSelect");
+  const monthSelect = document.getElementById("monthSelect");
 
   function setStatus(text, type) {
     statusEl.innerHTML = "";
@@ -332,6 +344,29 @@
     statusEl.appendChild(span);
   }
 
+  // 初始化年份和月份下拉
+  (function initYearMonth() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+
+    for (let y = currentYear - 1; y <= currentYear + 3; y++) {
+      const opt = document.createElement("option");
+      opt.value = String(y);
+      opt.textContent = y + "年";
+      if (y === currentYear) opt.selected = true;
+      yearSelect.appendChild(opt);
+    }
+
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement("option");
+      opt.value = String(m);
+      opt.textContent = m + "月";
+      if (m === currentMonth) opt.selected = true;
+      monthSelect.appendChild(opt);
+    }
+  })();
+
   // 按任意空白拆列，兼容 Tab / 多空格 / 单空格
   function splitRow(line) {
     return line
@@ -340,6 +375,43 @@
       .map(c => c.trim())
       .filter(c => c.length > 0);
   }
+
+  // 班次模板映射：可按自己需要修改
+// 自动根据上班时间，+9 小时生成下班时间
+function formatShift(rawShift) {
+  const s = rawShift.trim();
+  if (!s) return s;
+
+  // 只处理类似 "9:00" / "09:00" 这种纯时间
+  const m = s.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) {
+    // OFF / REST / AL / PH 等字母班次保持原样
+    return s;
+  }
+
+  const startHour = parseInt(m[1], 10);
+  const minute = parseInt(m[2], 10);
+
+  // 上班时间 + 9 小时
+  const added = startHour + 9;
+  const endHour24 = added % 24;
+
+  // 处理 15:00 + 9 小时 = 24:00 这种情况
+  let displayEndHour;
+  if (endHour24 === 0 && added >= 24) {
+    displayEndHour = 24;
+  } else {
+    displayEndHour = endHour24;
+  }
+
+  const pad = n => (n < 10 ? "0" + n : String(n));
+  const hhStart = pad(startHour);
+  const hhEnd = pad(displayEndHour);
+  const mm = pad(minute);
+
+  return `${hhStart}:${mm} - ${hhEnd}:${mm}`;
+}
+
 
   function parseSchedule(raw, nameKeyword, monthHint) {
     const lines = raw
@@ -357,7 +429,7 @@
     const dateRegex = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/;
     const weekRegex = /星期[一二三四五六日天]/;
 
-    // 找日期所在最左列
+    // 找日期所在的最左列
     let startCol = null;
     rows.forEach(row => {
       row.forEach((cell, idx) => {
@@ -386,7 +458,7 @@
 
     // 选目标行：
     // 1）若有姓名关键字且匹配到，则用匹配到的行
-    // 2）若有姓名关键字但没匹配到，则给一个轻微 warning，仍然用最后一行
+    // 2）若有姓名关键字但没匹配到，则 warning，但仍用最后一行
     // 3）若没填姓名关键字，默认用最后一行
     let targetRowIndex = rows.length - 1;
     let usedKeyword = false;
@@ -401,7 +473,6 @@
         }
       }
       if (!usedKeyword) {
-        // 没找到就提示一下，但不报错
         setStatus("没有找到包含该姓名关键字的行，已自动使用最后一行作为排班行。", "warn");
       }
     }
@@ -410,8 +481,10 @@
 
     const resultLines = [];
     for (let i = startCol; i < targetRow.length; i++) {
-      const shift = (targetRow[i] || "").trim();
-      if (!shift) continue;
+      const rawShift = (targetRow[i] || "").trim();
+      if (!rawShift) continue;
+
+      const shift = formatShift(rawShift);
 
       let date = dates[i];
       if (!date) {
@@ -437,10 +510,25 @@
       setStatus("正在解析排班内容…");
       const raw = inputRaw.value;
       const keyword = nameKeywordInput.value.trim();
-      const monthHint = monthHintInput.value.trim();
-      const result = parseSchedule(raw, keyword, monthHint);
-      outputText.value = result;
-      if (!statusEl.textContent) {
+
+      // 用选择的月份作为缺失日期的月份提示（防止极端情况）
+      const monthHint = monthSelect.value || "";
+
+      const body = parseSchedule(raw, keyword, monthHint);
+
+      const name = titleInput.value.trim() || "我的";
+      const year = yearSelect.value;
+      const month = monthSelect.value;
+      let titleLine = "";
+      if (year && month) {
+        const monthNum = parseInt(month, 10);
+        titleLine = name + "的 " + year + " 年 " + monthNum + " 月时间表";
+      }
+
+      const full = titleLine ? titleLine + "\n" + body : body;
+      outputText.value = full;
+
+      if (!statusEl.textContent || !statusEl.textContent.includes("warning")) {
         setStatus("解析完成，如有需要可以在右侧手动微调后再复制。", "ok");
       }
     } catch (err) {
@@ -468,7 +556,7 @@
     inputRaw.value = "";
     outputText.value = "";
     nameKeywordInput.value = "";
-    monthHintInput.value = "";
+    titleInput.value = "";
     setStatus("已清空，可以粘贴新的排班内容。", "ok");
   });
 </script>
