@@ -181,7 +181,7 @@
     .stats {
       margin-top: 8px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #e5e7eb;
       padding-top: 6px;
       border-top: 1px solid rgba(55,65,81,0.7);
@@ -257,14 +257,14 @@
       <div class="panel">
         <div class="panel-header">
           <span>1. 粘贴两个人的飞书排班</span>
-          <span class="right">格式同单人班表</span>
+          <span class="right">A：日期+时间；B：可只贴时间行</span>
         </div>
         <textarea id="inputA" class="input-area" placeholder="A 的排班（日期行 + 星期行 + A 的时间行）"></textarea>
         <div class="field-line">
           <input id="nameA" type="text" placeholder="A 的名字（如 积宏）">
         </div>
         <div style="height:8px;"></div>
-        <textarea id="inputB" class="input-area" placeholder="B 的排班（日期行 + 星期行 + B 的时间行）"></textarea>
+        <textarea id="inputB" class="input-area" placeholder="B 的排班（可只贴时间行：9:00 9:00 15:00 ...）"></textarea>
         <div class="field-line">
           <input id="nameB" type="text" placeholder="B 的名字（如 Dora）">
         </div>
@@ -278,10 +278,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>2. 两人的共同上班时间</span>
-          <span class="right">显示同一天同班次的日期</span>
+          <span class="right">按天统计同班次</span>
         </div>
         <textarea id="outputCompare" class="output-area"
-          placeholder="这里会显示：有哪些天两个人是同班次上班，以及整体统计..."
+          placeholder="示例：&#10;两人都上班的日期：12 天&#10;两人同班次上班的日期：7 天&#10;&#10;同班次上班的具体日期如下：&#10;&#10;12月3日（星期三），白班 09:00 - 18:00&#10;..."
         ></textarea>
       </div>
     </div>
@@ -291,10 +291,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>1. 粘贴直列的人员 + 当天时间</span>
-          <span class="right">建议：姓名列表 + 某一天的时间列</span>
+          <span class="right">姓名必须为「中英混合」格式</span>
         </div>
         <textarea id="inputRaw3" class="input-area"
-          placeholder="例如：&#10;（上面）很多行姓名，每行一个人&#10;...&#10;12月4日&#10;星期四&#10;9:00&#10;15:00&#10;OFF&#10;9:00&#10;...&#10;（人数顺序与时间顺序一一对应）"
+          placeholder="例如：&#10;（上面）很多行姓名，每行一个人，如 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei&#10;...&#10;12月4日&#10;星期四&#10;9:00&#10;15:00&#10;OFF&#10;9:00&#10;...&#10;（人数顺序与时间顺序一一对应）"
         ></textarea>
         <div class="field-line">
           <input id="dateOverride" type="text" placeholder="可选：手动填 日期 如 12月4日">
@@ -310,10 +310,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>2. 各班次对应的人员</span>
-          <span class="right">按班次分组显示谁在上班</span>
+          <span class="right">自动过滤类似 - 白9:00 的行</span>
         </div>
         <textarea id="outputText3" class="output-area"
-          placeholder="这里会显示：白班有哪些人、晚班有哪些人、夜班有哪些人..."
+          placeholder="这里会按班次显示人员，例如：&#10;白班 09:00 - 18:00（共 X 人）：&#10;- Derrick Chin 陈伟聪&#10;- 梅志豪 Orien Mei..."
         ></textarea>
         <div class="stats" id="stats3"></div>
       </div>
@@ -324,10 +324,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>1. 粘贴整页排班表</span>
-          <span class="right">姓名 + 当月所有日期列</span>
+          <span class="right">姓名列需为中英混合姓名</span>
         </div>
         <textarea id="inputRaw4" class="input-area"
-          placeholder="从飞书 / 表格复制整页内容：上方是日期行、星期行，下面是每个人每天的代码或时间（9:00 / MC / OFF / REST ...）"
+          placeholder="从飞书 / 表格复制整页内容：上方是日期行、星期行，下面是每个人每天的代码或时间（9:00 / MC / OFF / REST ...）。姓名必须类似 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei。"
         ></textarea>
         <div class="field-line">
           <button class="btn" id="btnParse4">解析表格</button>
@@ -351,7 +351,7 @@
           <span class="right">指定日期 + 代码 → 谁是这个班次 / 代码</span>
         </div>
         <textarea id="outputText4" class="output-area"
-          placeholder="解析后，可选择某一天 + 某个代码/时间（如 9:00、MC、OFF），这里会显示当天该代码对应的所有人员名单。"
+          placeholder="解析后，可选择某一天 + 某个代码或时间（如 9:00、MC、OFF），这里会显示当天该代码对应的所有人员名单。"
         ></textarea>
       </div>
     </div>
@@ -361,10 +361,10 @@
       <div class="panel">
         <div class="panel-header">
           <span>1. 粘贴整页排班表</span>
-          <span class="right">例如：想统计整月 MC 次数</span>
+          <span class="right">姓名列需为中英混合姓名</span>
         </div>
         <textarea id="inputRaw5" class="input-area"
-          placeholder="同上：姓名 + 日期列。整页复制后贴进来，例如要统计整个月 MC 出现次数。"
+          placeholder="同上：姓名 + 日期列。整页复制后贴进来，例如要统计整个月 MC 出现次数。姓名必须类似 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei。"
         ></textarea>
         <div class="field-line">
           <input id="codeInput5" type="text" placeholder="统计的代码（默认 MC）">
@@ -382,7 +382,7 @@
           <span class="right">按人统计该代码在整月出现次数</span>
         </div>
         <textarea id="outputText5" class="output-area"
-          placeholder="这里会显示：每个人 MC（或其它代码）出现了多少次，会按次数从高到低排序。"
+          placeholder="这里会显示：每个人 MC（或其它代码）在整个月出现了多少次，会按次数从高到低排序。"
         ></textarea>
       </div>
     </div>
@@ -392,6 +392,22 @@
 
 <script>
   const pad = n => (n < 10 ? "0" + n : "" + n);
+
+  // 识别“中英混合姓名”（如 Derrick Chin 陈伟聪 / 梅志豪 Orien Mei）
+  function isNameLine(line) {
+    const s = line.trim();
+    if (!s) return false;
+    const clean = s.replace(/^[-•·\s]+/, "");
+    // 明显是时间/数字/代码的排除
+    if (/^\d{1,2}:\d{2}$/.test(clean)) return false;
+    if (/^\d+(\.\d+)?$/.test(clean)) return false;
+    if (/^\d/.test(clean)) return false;
+    if (/OFF|REST|AL|MC|UPL|PCU|PH|MT|PL|ML|CL|HOSP|AWOL|GL/i.test(clean)) return false;
+
+    const hasHan = /[\u4e00-\u9fff]/.test(clean);
+    const hasLat = /[A-Za-z]/.test(clean);
+    return hasHan && hasLat;
+  }
 
   const TYPE_NAME = {
     ZAOZAO: "早早班",
@@ -456,14 +472,13 @@
     return `${pad(startHour)}:${pad(minute)} - ${pad(displayEndHour)}:${pad(minute)}`;
   }
 
-  // 解析「一行日期 + 一行星期 + 一行时间」的简表（单人、对比）
+  // 解析：一行日期 + 一行星期 + 一行时间
   function parseFeishuSchedule(raw, monthHint) {
     const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (!lines.length) throw new Error("请先粘贴排班内容");
 
     const rows = lines.map(splitRow);
     const dateRe = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/;
-    const weekRe = /星期[一二三四五六日天]/;
 
     let startCol = null;
     rows.forEach(r => {
@@ -541,7 +556,39 @@
     return { entries, stats, events };
   }
 
-  // 解析「整页排班表」（多行：姓名 + 各天代码）
+  // 只给时间行：复用 A 的日期/星期
+  function parseTimesOnly(raw, refEntries) {
+    const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (!lines.length) throw new Error("B 的排班内容为空");
+
+    const lastLine = lines[lines.length - 1];
+    const tokens = splitRow(lastLine);
+    if (!tokens.length) throw new Error("B 的时间行为空");
+
+    const entries = [];
+    for (let i = 0; i < refEntries.length && i < tokens.length; i++) {
+      const ref = refEntries[i];
+      const rawShift = tokens[i].trim();
+      if (!rawShift) continue;
+      const dummyStats = {
+        zaozao:0,bai:0,zhong:0,wan:0,wanwan:0,ye:0,
+        nianjia:0,rest:0,chuqin:0
+      };
+      const typeKey = classifyShift(rawShift, dummyStats);
+      const displayShift = formatShift(rawShift);
+      entries.push({
+        dateStr: ref.dateStr,
+        weekStr: ref.weekStr,
+        dayNum:  ref.dayNum,
+        rawShift,
+        typeKey,
+        displayShift
+      });
+    }
+    return entries;
+  }
+
+  // 解析整页排班表（多行：姓名 + 各天代码）
   function parseFullSheet(raw) {
     const lines = raw.split(/\r?\n/).map(l => l.replace(/\s+$/,"")).filter(l => l !== "");
     if (!lines.length) throw new Error("请先粘贴整页排班内容");
@@ -607,7 +654,9 @@
 
       const nameParts = row.slice(0, startCol).map(c => c.trim()).filter(Boolean);
       const name = nameParts.join(" ").trim();
-      if (!name || /^[0-9]+$/.test(name)) continue;
+
+      // 只接受“中英混合姓名”行
+      if (!name || !isNameLine(name)) continue;
 
       const codes = {};
       for (const d of days) {
@@ -619,11 +668,13 @@
       staffRows.push({ name, codes });
     }
 
-    if (!staffRows.length) throw new Error("未识别到有效的姓名行，请确认表格中包含姓名 + 各天代码。");
+    if (!staffRows.length) {
+      throw new Error("未识别到有效的姓名行，请确认表格中包含姓名（中英混合） + 各天代码。");
+    }
     return { days, dayToLabel, staffRows };
   }
 
-  // ICS 构造
+  // ICS
   function buildICS(events, year, month, name) {
     const now = new Date();
     const dtstamp =
@@ -812,52 +863,76 @@
   const btnClear2 = document.getElementById("btnClear2");
   const btnCompare = document.getElementById("btnCompare");
   function setStatus2(text,type){ if(!text){status2.innerHTML="";return;} const cls=type==="ok"?"ok":type==="error"?"error":""; status2.innerHTML=`<span class="${cls}">${text}</span>`;}
+
   btnCompare.onclick = () => {
-    try{
-      const rawA = inputA.value, rawB = inputB.value;
-      if(!rawA.trim() || !rawB.trim()) throw new Error("请分别粘贴 A 和 B 的排班内容");
-      const month = parseInt(monthSelect1.value,10) || null;
-      const {entries:entriesA} = parseFeishuSchedule(rawA, month);
-      const {entries:entriesB} = parseFeishuSchedule(rawB, month);
-      const mapA=new Map(), mapB=new Map();
-      entriesA.forEach(e=>{ if(e.dayNum!=null) mapA.set(e.dayNum,e);});
-      entriesB.forEach(e=>{ if(e.dayNum!=null) mapB.set(e.dayNum,e);});
-      const days = Array.from(mapA.keys()).filter(d=>mapB.has(d)).sort((a,b)=>a-b);
-      let bothWork=0,sameShift=0;
-      const detail=[];
-      const nameA=nameAEl.value.trim()||"A";
-      const nameB=nameBEl.value.trim()||"B";
-      days.forEach(day=>{
-        const ea=mapA.get(day), eb=mapB.get(day);
-        const aWork=isWorkType(ea.typeKey), bWork=isWorkType(eb.typeKey);
-        if(aWork && bWork) bothWork++;
-        if(aWork && bWork && ea.typeKey===eb.typeKey){
+    try {
+      const rawA = inputA.value;
+      const rawB = inputB.value;
+      if (!rawA.trim() || !rawB.trim()) {
+        throw new Error("请分别粘贴 A 和 B 的排班内容");
+      }
+      const month = parseInt(monthSelect1.value, 10) || null;
+
+      // A：完整解析
+      const parsedA = parseFeishuSchedule(rawA, month);
+      const entriesA = parsedA.entries;
+
+      // B：优先尝试完整解析，如果没有日期则视为“只贴时间行”
+      let entriesB;
+      try {
+        entriesB = parseFeishuSchedule(rawB, month).entries;
+      } catch (e) {
+        if ((e.message || "").includes("未识别到日期行")) {
+          entriesB = parseTimesOnly(rawB, entriesA);
+        } else {
+          throw e;
+        }
+      }
+
+      const mapA = new Map();
+      const mapB = new Map();
+      entriesA.forEach(e => { if (e.dayNum != null) mapA.set(e.dayNum, e); });
+      entriesB.forEach(e => { if (e.dayNum != null) mapB.set(e.dayNum, e); });
+
+      const days = Array.from(mapA.keys()).filter(d => mapB.has(d)).sort((a,b)=>a-b);
+      let bothWork = 0;
+      let sameShift = 0;
+      const detailLines = [];
+      const nameA = nameAEl.value.trim() || "A";
+      const nameB = nameBEl.value.trim() || "B";
+
+      days.forEach(day => {
+        const ea = mapA.get(day);
+        const eb = mapB.get(day);
+        const aWork = isWorkType(ea.typeKey);
+        const bWork = isWorkType(eb.typeKey);
+        if (aWork && bWork) bothWork++;
+        if (aWork && bWork && ea.typeKey === eb.typeKey) {
           sameShift++;
-          const w=ea.weekStr?`（${ea.weekStr}）`:"";
-          detail.push(
-            `${ea.dateStr}${w}\n`+
-            `- ${nameA}：${TYPE_NAME[ea.typeKey]||""} ${ea.displayShift}\n`+
-            `- ${nameB}：${TYPE_NAME[eb.typeKey]||""} ${eb.displayShift}\n`+
-            `→ 同班次\n`
-          );
+          const w = ea.weekStr ? `（${ea.weekStr}）` : "";
+          const shiftName = TYPE_NAME[ea.typeKey] || "";
+          detailLines.push(`${ea.dateStr}${w}，${shiftName} ${ea.displayShift}`);
         }
       });
-      let summary=
-        `两人有排班重叠的日期：${days.length} 天\n`+
-        `其中，两人都上班的日期：${bothWork} 天\n`+
+
+      let summary =
+        `两人都上班的日期：${bothWork} 天\n` +
         `两人同班次上班的日期：${sameShift} 天\n\n`;
-      if(!detail.length){
-        summary+="目前没有找到两人「同班次」上班的日期。";
-      }else{
-        summary+="以下是两人同班次上班的具体日期：\n\n"+detail.join("\n");
+
+      if (!detailLines.length) {
+        summary += "目前没有找到两人「同班次」上班的日期。";
+      } else {
+        summary += "同班次上班的具体日期如下：\n\n" + detailLines.join("\n");
       }
-      outputCompare.value=summary;
-      setStatus2("已生成对比结果","ok");
-    }catch(e){
-      outputCompare.value="";
-      setStatus2(e.message||"对比失败","error");
+
+      outputCompare.value = summary;
+      setStatus2("已生成对比结果", "ok");
+    } catch (e) {
+      outputCompare.value = "";
+      setStatus2(e.message || "对比失败", "error");
     }
   };
+
   btnClear2.onclick=()=>{
     inputA.value=""; inputB.value=""; outputCompare.value="";
     nameAEl.value=""; nameBEl.value="";
@@ -892,13 +967,13 @@
 
       const rawNameLines=lines.slice(0,dateIdx);
       const ignoreKeys=["班表","IM号","大客户经理","吉隆坡","支援","支援账户组","VIP"];
+
       const names=rawNameLines.filter(l=>{
         if(!l) return false;
-        if(["白","中","晚","夜"].includes(l)) return false;
-        if(dateRe.test(l)||weekRe.test(l)) return false;
-        return !ignoreKeys.some(k=>l.includes(k));
+        if(ignoreKeys.some(k=>l.includes(k))) return false;
+        return isNameLine(l);
       });
-      if(!names.length) throw new Error("未识别到姓名，请确认上半部分是姓名列表（一行一个人）");
+      if(!names.length) throw new Error("未识别到姓名，请确认上半部分是姓名列表（中英混合，例如 Derrick Chin 陈伟聪）");
 
       const afterIdx=weekLine?dateIdx+2:dateIdx+1;
       const timeTokens=[];
@@ -977,7 +1052,7 @@
     try{
       const raw=inputRaw4.value;
       sheet4=parseFullSheet(raw);
-      // 填日期下拉
+      // 日期下拉
       daySelect4.innerHTML='<option value="">请选择日期</option>';
       sheet4.days.forEach(d=>{
         const opt=document.createElement("option");
@@ -1085,7 +1160,7 @@
       text+=`共有 ${list.length} 人出现过该代码，总次数 ${total} 次。\n\n`;
       if(!list.length){
         text+="当前表格中未找到该代码。";
-      }else{
+     }else{
         list.forEach(([name,c])=>{
           text+=`- ${name}：${code} ${c} 次\n`;
         });
