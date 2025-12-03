@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>飞书排班 → 文本生成器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #050816;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1180px;
+      height: 90vh;
+      background: radial-gradient(circle at top left, #1f2937, #020617);
+      border-radius: 24px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.75);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(96, 165, 250, 0.7);
+      color: #bfdbfe;
+      white-space: nowrap;
+    }
+
+    .app-body {
+      flex: 1;
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: 1.05fr 1.05fr;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .panel {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 18px;
+      padding: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+
+    .panel-header small {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .input-area,
+    .output-area {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      background: #020617;
+      padding: 8px;
+      resize: none;
+      width: 100%;
+      font-size: 13px;
+      color: #e5e7eb;
+      outline: none;
+      line-height: 1.45;
+      white-space: pre;
+      overflow: auto;
+      min-height: 0;
+    }
+
+    .input-area::placeholder {
+      color: #4b5563;
+      white-space: pre-line;
+    }
+
+    .controls {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .left-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .field-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .field-group label {
+      font-size: 11px;
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+
+    .field-group input {
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 4px 8px;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 12px;
+      outline: none;
+      min-width: 80px;
+    }
+
+    .field-group input::placeholder {
+      color: #4b5563;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: transform 0.08s, box-shadow 0.1s, background 0.15s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: #f9fafb;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.7);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(31, 41, 55, 0.9);
+      color: #e5e7eb;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px);
+    }
+
+    .status {
+      margin-top: 4px;
+      font-size: 11px;
+      min-height: 14px;
+    }
+
+    .status span.ok {
+      color: #4ade80;
+    }
+
+    .status span.warn {
+      color: #f97316;
+    }
+
+    .status span.error {
+      color: #f97373;
+    }
+
+    .footer {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #6b7280;
+      text-align: right;
+    }
+
+    @media (max-width: 960px) {
+      .app {
+        height: auto;
+      }
+      .app-body {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="app-header">
+    <div>
+      <div class="title">飞书排班 → 文本生成器</div>
+      <div class="subtitle">
+        从飞书/表格复制日期行 + 星期行 + 个人排班行，粘贴后一键生成文字版时间表
+      </div>
+    </div>
+    <div class="badge">本地解析 · 适合 GitHub Pages</div>
+  </div>
+
+  <div class="app-body">
+    <!-- 左侧：输入 -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>1. 粘贴从飞书复制的排班内容</span>
+        <small>建议选择：日期行 + 星期行 + 你的排班行</small>
+      </div>
+      <textarea
+        id="inputRaw"
+        class="input-area"
+        placeholder="示例使用方式&#10;- 在飞书中：用鼠标选中 3 行：日期行、星期行、你的排班行&#10;- 复制后直接粘贴到这里&#10;&#10;例：&#10;12月1日    12月2日    12月3日 ...&#10;星期一      星期二      星期三   ...&#10;Ji Hong Kong 江积宏   OFF    REST   9:00 ..."
+      ></textarea>
+
+      <div class="controls">
+        <div class="left-controls">
+          <div class="field-group">
+            <label for="nameKeyword">姓名关键字</label>
+            <input id="nameKeyword" type="text" placeholder="如 Ji Hong / 积宏" />
+          </div>
+          <div class="field-group">
+            <label for="monthHint">月份提示</label>
+            <input id="monthHint" type="text" placeholder="默认自动识别" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="btnClear">清空</button>
+          <button class="btn btn-primary" id="btnParse">生成时间表</button>
+        </div>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+
+    <!-- 右侧：输出 -->
+    <div class="panel">
+      <div class="panel-header">
+        <span>2. 生成的文字版时间表</span>
+        <small>可直接复制发送给 Leader / HR / 自己备份</small>
+      </div>
+      <textarea
+        id="outputText"
+        class="output-area"
+        placeholder="点击左侧的 生成时间表，这里将自动生成：&#10;12月1日（星期一）：OFF&#10;12月2日（星期二）：REST&#10;..."
+      ></textarea>
+
+      <div class="controls">
+        <div class="left-controls">
+          <span style="font-size:11px;color:#6b7280;">规则：空白单元格会被自动忽略，只保留有班次/备注的日期。</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="btnCopy">复制结果</button>
+        </div>
+      </div>
+
+      <div class="footer">
+        小提示：如果班次显示和你表格里不一致，可以在右侧手动微调再复制。
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const inputRaw = document.getElementById("inputRaw");
+  const nameKeywordInput = document.getElementById("nameKeyword");
+  const monthHintInput = document.getElementById("monthHint");
+  const outputText = document.getElementById("outputText");
+  const statusEl = document.getElementById("status");
+  const btnParse = document.getElementById("btnParse");
+  const btnCopy = document.getElementById("btnCopy");
+  const btnClear = document.getElementById("btnClear");
+
+  function setStatus(text, type) {
+    statusEl.innerHTML = "";
+    if (!text) return;
+    const span = document.createElement("span");
+    if (type) span.classList.add(type);
+    span.textContent = text;
+    statusEl.appendChild(span);
+  }
+
+  function splitRow(line) {
+    // 按 Tab 或连续两个以上空格切分
+    return line
+      .split(/\t+| {2,}/)
+      .map((c) => c.trim())
+      .filter((c) => c.length > 0);
+  }
+
+  function parseSchedule(raw, nameKeyword, monthHint) {
+    const lines = raw
+      .split(/\r?\n/)
+      .map((l) => l.trimEnd())
+      .filter((l) => l.trim().length > 0);
+
+    if (!lines.length) {
+      throw new Error("请先在左侧粘贴从飞书复制的排班内容。");
+    }
+
+    const rows = lines.map(splitRow);
+    const dateRegex = /(\d{1,2})月(\d{1,2})日/;
+    const weekRegex = /星期[一二三四五六日天]/;
+
+    // 找到日期列起点
+    let startCol = null;
+    rows.forEach((row) => {
+      row.forEach((cell, idx) => {
+        if (dateRegex.test(cell)) {
+          if (startCol === null || idx < startCol) startCol = idx;
+        }
+      });
+    });
+
+    if (startCol === null) {
+      throw new Error("没有识别到“12月1日”这种格式的日期，请确认已包含日期行。");
+    }
+
+    const colCount = Math.max(...rows.map((r) => r.length));
+    const dates = new Array(colCount).fill("");
+    const weeks = new Array(colCount).fill("");
+
+    rows.forEach((row) => {
+      for (let i = startCol; i < row.length; i++) {
+        const cell = row[i].trim();
+        if (dateRegex.test(cell)) dates[i] = cell;
+        if (weekRegex.test(cell)) weeks[i] = cell;
+      }
+    });
+
+    // 找目标行：先按姓名关键字匹配，没有则默认最后一行
+    let targetRow = null;
+    if (nameKeyword) {
+      lines.forEach((line, idx) => {
+        if (line.includes(nameKeyword)) {
+          targetRow = rows[idx];
+        }
+      });
+      if (!targetRow) {
+        throw new Error("没有在排班内容中找到包含该姓名关键字的行，可以尝试只填中文名或英文名的一部分。");
+      }
+    } else {
+      targetRow = rows[rows.length - 1];
+    }
+
+    const resultLines = [];
+    for (let i = startCol; i < targetRow.length; i++) {
+      const shift = (targetRow[i] || "").trim();
+      if (!shift) continue;
+
+      let date = dates[i];
+      if (!date) {
+        // 如果缺失日期，用月份提示或“第N天”占位
+        if (monthHint && /^\d{1,2}$/.test(shift) === false) {
+          const dayIndex = i - startCol + 1;
+          date = monthHint + "月" + dayIndex + "日";
+        } else {
+          date = "第" + (i - startCol + 1) + "天";
+        }
+      }
+
+      const week = weeks[i];
+      let label = date;
+      if (week) label += "（" + week + "）";
+      resultLines.push(label + "：" + shift);
+    }
+
+    return resultLines.join("\n");
+  }
+
+  btnParse.addEventListener("click", () => {
+    try {
+      setStatus("正在解析排班内容…");
+      const raw = inputRaw.value;
+      const keyword = nameKeywordInput.value.trim();
+      const monthHint = monthHintInput.value.trim();
+      const result = parseSchedule(raw, keyword, monthHint);
+      outputText.value = result;
+      setStatus("解析完成，如果有需要可以在右侧手动微调后再复制。", "ok");
+    } catch (err) {
+      console.error(err);
+      setStatus(err.message || "解析失败，可以检查一下粘贴内容是否包含日期行/星期行/排班行。", "error");
+    }
+  });
+
+  btnCopy.addEventListener("click", async () => {
+    const text = outputText.value.trim();
+    if (!text) {
+      setStatus("当前没有可复制的结果。", "warn");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setStatus("已复制到剪贴板。", "ok");
+    } catch (err) {
+      console.error(err);
+      setStatus("复制失败，可以手动选中右侧内容后复制。", "warn");
+    }
+  });
+
+  btnClear.addEventListener("click", () => {
+    inputRaw.value = "";
+    outputText.value = "";
+    nameKeywordInput.value = "";
+    monthHintInput.value = "";
+    setStatus("已清空，你可以重新粘贴新的排班内容。", "ok");
+  });
+</script>
+</body>
+</html>
