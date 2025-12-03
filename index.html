@@ -471,58 +471,65 @@
   }
 
   // 生成 ICS 文件内容
-  function buildICS(events, year, month, name) {
-    const pad = n => (n < 10 ? "0" + n : "" + n);
-    const now = new Date();
-    const dtstamp =
-      now.getFullYear() +
-      pad(now.getMonth() + 1) +
-      pad(now.getDate()) +
-      "T" +
-      pad(now.getHours()) +
-      pad(now.getMinutes()) +
-      pad(now.getSeconds());
+function buildICS(events, year, month, name) {
+  const pad = n => (n < 10 ? "0" + n : "" + n);
+  const now = new Date();
+  const dtstamp =
+    now.getFullYear() +
+    pad(now.getMonth() + 1) +
+    pad(now.getDate()) +
+    "T" +
+    pad(now.getHours()) +
+    pad(now.getMinutes()) +
+    pad(now.getSeconds());
 
-    const typeNameMap = {
-      ZAOZAO: "早早班",
-      BAI: "白班",
-      ZHONG: "中班",
-      WAN: "晚班",
-      WANWAN: "晚晚班",
-      YE: "夜班"
-    };
+  // ① 班次名称：这里我顺便把年假、休息也列进去，方便以后要用
+  const typeNameMap = {
+    ZAOZAO: "早早班",
+    BAI: "白班",
+    ZHONG: "中班",
+    WAN: "晚班",
+    WANWAN: "晚晚班",
+    YE: "夜班",
+    NIANJIA: "年假",
+    REST: "休息"
+  };
 
-    const lines = [];
-    lines.push("BEGIN:VCALENDAR");
-    lines.push("VERSION:2.0");
-    lines.push("PRODID:-//ScheduleConverter//CN");
+  const lines = [];
+  lines.push("BEGIN:VCALENDAR");
+  lines.push("VERSION:2.0");
+  lines.push("PRODID:-//ScheduleConverter//CN");
 
-    events.forEach((e, idx) => {
-      const y = parseInt(year, 10);
-      const m = parseInt(month, 10);
-      const d = e.day;
+  events.forEach((e, idx) => {
+    const y = parseInt(year, 10);
+    const m = parseInt(month, 10);
+    const d = e.day;
 
-      const dtstart = `${y}${pad(m)}${pad(d)}T${pad(e.startHour)}${pad(e.startMinute)}00`;
-      const endHour = e.endHour === 24 ? 23 : e.endHour;
-      const endMinute = e.endHour === 24 ? 59 : e.endMinute;
-      const dtend = `${y}${pad(m)}${pad(d)}T${pad(endHour)}${pad(endMinute)}00`;
+    const dtstart = `${y}${pad(m)}${pad(d)}T${pad(e.startHour)}${pad(e.startMinute)}00`;
+    const endHour = e.endHour === 24 ? 23 : e.endHour;
+    const endMinute = e.endHour === 24 ? 59 : e.endMinute;
+    const dtend = `${y}${pad(m)}${pad(d)}T${pad(endHour)}${pad(endMinute)}00`;
 
-      const label = typeNameMap[e.typeKey] || "上班";
-      const summary = `${name} - ${label} ${pad(e.startHour)}:${pad(e.startMinute)}-${pad(e.endHour)}:${pad(e.endMinute)}`;
-      const uid = `${y}${pad(m)}${pad(d)}-${pad(e.startHour)}${pad(e.startMinute)}-${idx}@schedule.local`;
+    const label = typeNameMap[e.typeKey] || "上班";
 
-      lines.push("BEGIN:VEVENT");
-      lines.push("UID:" + uid);
-      lines.push("DTSTAMP:" + dtstamp);
-      lines.push("DTSTART:" + dtstart);
-      lines.push("DTEND:" + dtend);
-      lines.push("SUMMARY:" + summary);
-      lines.push("END:VEVENT");
-    });
+    // ② 这里改成只用班次，不再带姓名和时间
+    const summary = label;
 
-    lines.push("END:VCALENDAR");
-    return lines.join("\r\n");
-  }
+    const uid = `${y}${pad(m)}${pad(d)}-${pad(e.startHour)}${pad(e.startMinute)}-${idx}@schedule.local`;
+
+    lines.push("BEGIN:VEVENT");
+    lines.push("UID:" + uid);
+    lines.push("DTSTAMP:" + dtstamp);
+    lines.push("DTSTART:" + dtstart);
+    lines.push("DTEND:" + dtend);
+    lines.push("SUMMARY:" + summary);
+    lines.push("END:VEVENT");
+  });
+
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
 
   // 事件绑定
   btnParse.onclick = () => {
