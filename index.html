@@ -332,13 +332,15 @@
     statusEl.appendChild(span);
   }
 
-  function splitRow(line) {
-    // 按 Tab 或连续两个以上空格切分
-    return line
-      .split(/\t+| {2,}/)
-      .map((c) => c.trim())
-      .filter((c) => c.length > 0);
-  }
+function splitRow(line) {
+  // 按任意空白（空格 / Tab）切，兼容性更高
+  return line
+    .trim()
+    .split(/\s+/)
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0);
+}
+
 
   function parseSchedule(raw, nameKeyword, monthHint) {
     const lines = raw
@@ -351,7 +353,7 @@
     }
 
     const rows = lines.map(splitRow);
-    const dateRegex = /(\d{1,2})月(\d{1,2})日/;
+    const dateRegex = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/;
     const weekRegex = /星期[一二三四五六日天]/;
 
     // 找到日期列起点
