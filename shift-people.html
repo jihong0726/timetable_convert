@@ -1,51 +1,294 @@
-
 <!DOCTYPE html>
-<html lang=\"zh-CN\">
+<html lang="zh-CN">
 <head>
-  <meta charset=\"UTF-8\">
-  <title>班次查人 · 班表工具</title>
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <link rel=\"stylesheet\" href=\"css/common.css\">
+  <meta charset="UTF-8">
+  <title>功能 3 · 班次查人</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/common.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px 20px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+      "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      color: #e5f0ff;
+      background: transparent;
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .app-header {
+      margin-bottom: 14px;
+    }
+
+    .app-header-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .app-header-subtitle {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(204, 220, 255, 0.9);
+    }
+
+    .app-body {
+      margin-top: 18px;
+    }
+
+    .grid-2 {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      flex: 1;
+      background: radial-gradient(circle at top, rgba(15, 25, 58, 0.98), rgba(6, 10, 25, 0.98));
+      border-radius: 24px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(123, 183, 255, 0.35);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.65);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: rgba(221, 235, 255, 0.95);
+      font-weight: 500;
+    }
+
+    .panel-header span:last-child {
+      font-size: 11px;
+      color: rgba(178, 202, 252, 0.9);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      padding: 11px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: radial-gradient(circle at top, #020514 0, #050815 60%);
+      color: #f5f7ff;
+      font-size: 13px;
+      line-height: 1.6;
+      outline: none;
+    }
+
+    textarea::placeholder {
+      color: rgba(171, 196, 245, 0.7);
+    }
+
+    textarea:focus {
+      border-color: rgba(151, 212, 255, 0.98);
+      box-shadow: 0 0 0 1px rgba(117, 191, 255, 0.8);
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+
+    .field-row label {
+      font-size: 13px;
+      color: rgba(204, 222, 255, 0.95);
+    }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: rgba(5, 9, 22, 0.96);
+      color: #f5f7ff;
+      font-size: 13px;
+      outline: none;
+      min-width: 90px;
+    }
+
+    .hint-text {
+      font-size: 12px;
+      color: rgba(181, 203, 255, 0.85);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      margin-right: 10px;
+      margin-top: 2px;
+      background: rgba(10, 20, 48, 0.9);
+      color: #c9ddff;
+      border: 1px solid rgba(136, 188, 255, 0.6);
+      box-shadow: none;
+      transition: all 0.16s ease-out;
+    }
+
+    .btn:hover {
+      background: rgba(17, 32, 70, 0.95);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #4f8dff, #2fd4ff);
+      color: #04101f;
+      border: none;
+      box-shadow: 0 14px 32px rgba(22, 104, 255, 0.7);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-0.5px);
+      box-shadow: 0 16px 36px rgba(22, 104, 255, 0.85);
+    }
+
+    .status,
+    .stats {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(184, 205, 255, 0.9);
+      white-space: pre-wrap;
+    }
+
+    .result-block-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      color: rgba(208, 225, 255, 0.96);
+    }
+
+    .result-box {
+      border-radius: 12px;
+      border: 1px dashed rgba(135, 187, 255, 0.6);
+      padding: 8px 10px;
+      min-height: 60px;
+      font-size: 13px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top, rgba(6, 13, 36, 0.96), rgba(4, 7, 20, 0.98));
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px;
+      }
+
+      .grid-2 {
+        flex-direction: column;
+      }
+
+      .panel {
+        padding: 12px 12px 14px;
+        border-radius: 18px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class=\"app\">
-  <div class=\"app-header\">
-    <div class=\"title\">功能 3 · 班次查人（按一天的直列班次）</div>
-    <div class=\"subtitle\">
-      简化版：适合“某一天”的班次查人。<br>
-      上半部分：姓名列表（每行一个，中英混合）。<br>
-      下半部分：这一整天的班次代码直列（每一行一个时间/代码，如 9:00 / 15:00 / OFF ...），顺序与姓名对应。
+<div class="app">
+  <div class="app-header">
+    <div class="app-header-title">功能 3 · 班次查人</div>
+    <div class="app-header-subtitle">
+      从飞书复制整页排班内容（包含姓名、日期、时间）到左侧，系统会自动识别<br>
+      - 有效姓名行（如「Derrick Chin 陈伟聪」「梅志豪 Orien Mei」）；<br>
+      - 每个日期下各种班次 / 代码（9:00 / 15:00 / 0:00 / AL / OFF / REST 等）。<br>
+      在右侧选择日期 + 班次，即可看到那天这个班次是谁上班。
     </div>
   </div>
-  <div class=\"app-body\">
-    <div class=\"mode-grid\">
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>1. 粘贴内容</span>
-          <span class=\"right\">姓名 + 直列班次</span>
+
+  <div class="app-body">
+    <div class="grid-2">
+      <!-- 左侧：输入 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>1. 粘贴排班整页内容</span>
+          <span>支持整页复制，系统自动识别姓名 + 时间</span>
         </div>
-        <textarea id=\"inputShift3\" class=\"input-area\" placeholder=\"例子：\\nJoyi Xiang 项梦梦\\nAiden Cho 左家彦\\nAlden Lim 林江鸿\\n...\\n（空一行）\\n9:00\\n15:00\\nOFF\\n...\"></textarea>
-        <div class=\"field-line\">
-          <input id=\"dateLabel3\" type=\"text\" placeholder=\"日期说明（如 12月4日（星期四））\">
+
+        <textarea
+          id="shiftPeopleRawInput"
+          placeholder="直接从飞书复制整页（包含标题、姓名、时间统计等）粘贴到这里。&#10;系统会：&#10;- 自动过滤【白9:00】这种表头类信息；&#10;- 只保留有效姓名行（中文 + 英文）和班次时间。"></textarea>
+
+        <div class="field-row">
+          <button class="btn" id="btnShiftPeopleClear">清空</button>
         </div>
-        <div class=\"field-line\">
-          <button class=\"btn\" id=\"btnClear3\">清空</button>
-          <button class=\"btn btn-primary\" id=\"btnParse3\">解析并按班次分组</button>
+
+        <div class="status" id="shiftPeopleStatus">
+          提示：姓名必须是「英文名 + 中文名」或「中文名 + 英文名」的格式，才能被识别为上班的人。
         </div>
-        <div class=\"status\" id=\"status3\"></div>
       </div>
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>2. 各班次对应人员</span>
-          <span class=\"right\">自动按班次分组</span>
+
+      <!-- 右侧：选择 & 结果 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>2. 选择日期 + 班次，查看是谁上班</span>
+          <span>日期列表来自左侧解析结果</span>
         </div>
-        <textarea id=\"outputText3\" class=\"output-area\" placeholder=\"解析后，这里会显示：每个班次（白班 09:00 - 18:00 等）下面有哪些人。\"></textarea>
-        <div class=\"stats\" id=\"stats3\"></div>
+
+        <div class="field-row">
+          <label for="shiftPeopleDateSelect">日期</label>
+          <select id="shiftPeopleDateSelect">
+            <option value="">请选择日期</option>
+          </select>
+
+          <label for="shiftPeopleCodeSelect">班次 / 代码</label>
+          <select id="shiftPeopleCodeSelect">
+            <option value="">请选择班次</option>
+          </select>
+
+          <button class="btn btn-primary" id="btnShiftPeopleRun">查谁上班</button>
+        </div>
+
+        <div class="hint-text">
+          说明：下拉框只会展示真正的班次 / 代码，不会出现「12月12日」这种日期本身。
+        </div>
+
+        <div class="result-block" style="margin-top:10px;">
+          <div class="result-block-title">统计</div>
+          <div class="result-box" id="shiftPeopleSummary">
+            这里会显示：当前选择的日期、班次，以及上班人数。
+          </div>
+        </div>
+
+        <div class="result-block" style="margin-top:10px;">
+          <div class="result-block-title">上班人员名单</div>
+          <div class="result-box" id="shiftPeopleResult">
+            这里会显示：所有在该日期该班次上班的姓名列表。
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<script src=\"js/core.js\"></script>
-<script src=\"js/shift-people.js\"></script>
+
+<script src="js/core.js"></script>
+<script src="js/shift-people.js"></script>
 </body>
 </html>
