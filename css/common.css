@@ -1,75 +1,79 @@
-/* 通用字体 / 背景，只作用在功能页 iframe 里 */
+/* 通用：所有工具页 iframe（右侧）共用的样式 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  padding: 24px 24px 32px;
+  padding: 24px 32px 32px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
     -apple-system, "Microsoft YaHei", sans-serif;
   font-size: 14px;
   color: #e6f0ff;
   background: radial-gradient(circle at top, #11172b 0, #050814 45%, #020308 100%);
-  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
 }
 
-/* 外层卡片容器：让右边内容不要贴着边 */
-.tool-container {
-  max-width: 1000px;
+/* 把页面第一个元素，当成“工具卡片”的外壳来美化，不需要你改 HTML */
+body > *:first-child {
+  max-width: 980px;
+  width: 100%;
   margin: 0 auto;
   background: linear-gradient(145deg, rgba(7, 14, 34, 0.96), rgba(10, 16, 40, 0.98));
   border-radius: 20px;
-  padding: 22px 24px 26px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75);
-  border: 1px solid rgba(119, 178, 255, 0.2);
+  padding: 20px 24px 24px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.78);
+  border: 1px solid rgba(119, 178, 255, 0.18);
 }
 
-/* 标题区和说明 */
-.tool-title {
+/* 标题类（你原本 h1/h2/h3 统统会套进这个卡片里） */
+h1,
+h2,
+h3 {
+  margin: 0 0 8px;
+  color: #f4f7ff;
+}
+
+h1 {
   font-size: 20px;
   font-weight: 700;
-  margin: 0 0 6px;
 }
 
-.tool-subtitle {
-  margin: 0 0 14px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: rgba(204, 220, 255, 0.86);
-}
-
-/* 分区标题：① ② ③ 之类的 */
-.section-title {
-  margin: 16px 0 6px;
+h2 {
+  font-size: 16px;
   font-weight: 600;
-  font-size: 13px;
-  color: #f3f6ff;
 }
 
-/* 文字说明 */
-.tool-hint {
+p {
   margin: 4px 0 10px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: rgba(184, 205, 255, 0.82);
+  line-height: 1.6;
+  color: rgba(204, 220, 255, 0.9);
 }
 
-/* 表单整体布局 */
-.field-group {
-  margin-bottom: 14px;
+/* 小标题 / 分区说明可以用 b / strong 或你原来用的文案 */
+b,
+strong {
+  color: #ffffff;
 }
 
-/* 文本框样式 */
+/* 文本域 */
 textarea {
   width: 100%;
   min-height: 110px;
   resize: vertical;
-  padding: 10px 12px;
+  padding: 9px 11px;
   border-radius: 12px;
-  border: 1px solid rgba(126, 186, 255, 0.75);
+  border: 1px solid rgba(126, 186, 255, 0.8);
   background: radial-gradient(circle at top, #050819 0, #03040c 65%);
   color: #f5f7ff;
-  box-sizing: border-box;
   font-size: 13px;
   line-height: 1.5;
   outline: none;
+  margin: 4px 0 12px;
 }
 
 textarea::placeholder {
@@ -81,17 +85,30 @@ textarea:focus {
   box-shadow: 0 0 0 1px rgba(117, 191, 255, 0.8);
 }
 
-/* 按钮区 */
-.button-row {
-  margin: 4px 0 14px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+/* 文本输入框 & 下拉 */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 186, 255, 0.8);
+  background: rgba(5, 9, 22, 0.96);
+  color: #f5f7ff;
+  font-size: 13px;
+  outline: none;
+  margin: 4px 4px 10px 0;
 }
 
-/* 主按钮 & 次按钮 */
-.btn-primary,
-.btn-secondary {
+select {
+  padding-right: 26px;
+}
+
+input::placeholder {
+  color: rgba(170, 194, 244, 0.8);
+}
+
+/* 按钮：你现有的所有 <button> 都会自动变好看 */
+button {
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 13px;
@@ -101,34 +118,37 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   white-space: nowrap;
+  margin: 4px 6px 4px 0;
   transition: all 0.16s ease-out;
-}
-
-.btn-primary {
   background: linear-gradient(135deg, #3b82ff, #2fd4ff);
   color: #04101f;
   box-shadow: 0 10px 24px rgba(22, 104, 255, 0.6);
 }
 
-.btn-primary:hover {
+button:hover {
   filter: brightness(1.05);
   transform: translateY(-0.5px);
   box-shadow: 0 14px 30px rgba(22, 104, 255, 0.75);
 }
 
-.btn-secondary {
+/* 如果你有“次级按钮”，可以在 HTML 上加 class="secondary" */
+button.secondary {
   background: rgba(10, 20, 48, 0.9);
   color: #c9ddff;
+  box-shadow: none;
   border: 1px solid rgba(136, 188, 255, 0.6);
 }
 
-.btn-secondary:hover {
+button.secondary:hover {
   background: rgba(17, 32, 70, 0.95);
 }
 
-/* 结果区 */
-.result-block {
-  margin-top: 10px;
+/* 结果区域，如果你原来有一个大框显示结果，可以加 class="result" 来用这套样式 */
+.result,
+#result,
+#output,
+#statsOutput {
+  margin-top: 6px;
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(133, 193, 255, 0.5);
@@ -140,27 +160,21 @@ textarea:focus {
   line-height: 1.6;
 }
 
-.result-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #f4f7ff;
-}
-
-/* 小注释 */
-.tool-note {
-  margin-top: 10px;
+/* 更小的提示文字（你原先可能用 <small>、说明文字之类） */
+small {
+  display: block;
+  margin-top: 6px;
   font-size: 11px;
   color: rgba(175, 199, 252, 0.78);
 }
 
-/* 响应式：窄屏时稍微减 padding */
+/* 窄屏适配（如果你在手机上打开） */
 @media (max-width: 768px) {
   body {
     padding: 14px 12px 18px;
   }
 
-  .tool-container {
+  body > *:first-child {
     padding: 16px 14px 20px;
   }
 
