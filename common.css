@@ -1,0 +1,184 @@
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, SF Pro Text, Segoe UI, system-ui, sans-serif;
+}
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #020617 0%, #020617 40%, #000000 100%);
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+a { color: #60a5fa; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.app {
+  width: 100%;
+  max-width: 1180px;
+  height: 92vh;
+  background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(2,6,23,0.98));
+  border-radius: 24px;
+  box-shadow: 0 28px 70px rgba(0,0,0,0.80);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(148,163,184,0.35);
+}
+.app-header { margin-bottom: 8px; }
+.title { font-size: 22px; font-weight: 700; }
+.subtitle {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.main-links {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+.card-link {
+  display: block;
+  padding: 12px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top left, rgba(37,99,235,0.18), rgba(15,23,42,0.96));
+  border: 1px solid rgba(55,65,81,0.9);
+  box-shadow: 0 18px 40px rgba(15,23,42,0.9);
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.card-desc {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.app-body {
+  flex: 1;
+  margin-top: 10px;
+  min-height: 0;
+  position: relative;
+}
+.mode-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  min-height: 0;
+}
+.panel {
+  background: radial-gradient(circle at top left, rgba(30,64,175,0.15), rgba(15,23,42,0.98));
+  border-radius: 18px;
+  padding: 12px;
+  border: 1px solid rgba(55,65,81,0.9);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.panel-header {
+  margin-bottom: 8px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #e5e7eb;
+}
+.panel-header span.right {
+  font-size: 11px;
+  color: #9ca3af;
+}
+.input-area,
+.output-area {
+  flex: 1;
+  border-radius: 12px;
+  border: 1px solid rgba(31,41,55,0.9);
+  background: #020617;
+  padding: 8px;
+  width: 100%;
+  font-size: 13px;
+  color: #e5e7eb;
+  outline: none;
+  line-height: 1.45;
+  overflow: auto;
+}
+.input-area::placeholder,
+.output-area::placeholder {
+  color: #4b5563;
+}
+.field-line {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.field-line input,
+.field-line select {
+  border-radius: 999px;
+  padding: 4px 10px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 12px;
+}
+.btn {
+  border: none;
+  outline: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 6px;
+  color: #e5e7eb;
+  background: rgba(31,41,55,0.95);
+  border: 1px solid rgba(75,85,99,0.9);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.08s, box-shadow 0.12s, background 0.12s;
+}
+.btn:hover {
+  background: rgba(55,65,81,0.95);
+  box-shadow: 0 4px 14px rgba(15,23,42,0.8);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 6px rgba(15,23,42,0.9);
+}
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border: 1px solid rgba(129,140,248,0.9);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.85);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+}
+.status {
+  font-size: 11px;
+  margin-top: 6px;
+  min-height: 16px;
+}
+.status .ok { color: #4ade80; }
+.status .error { color: #f97373; }
+.stats {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #e5e7eb;
+  padding-top: 6px;
+  border-top: 1px solid rgba(55,65,81,0.7);
+  line-height: 1.8;
+}
+@media(max-width:960px){
+  .app { height: auto; }
+  .mode-grid { position: static; grid-template-columns: 1fr; }
+}
