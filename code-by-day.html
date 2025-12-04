@@ -1,68 +1,316 @@
-
 <!DOCTYPE html>
-<html lang=\"zh-CN\">
+<html lang="zh-CN">
 <head>
-  <meta charset=\"UTF-8\">
-  <title>按日期查代码 · 班表工具</title>
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <link rel=\"stylesheet\" href=\"css/common.css\">
+  <meta charset="UTF-8">
+  <title>功能 4 · 按日期查代码</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/common.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px 20px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+      "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      color: #e5f0ff;
+      background: transparent;
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .app-header {
+      margin-bottom: 14px;
+    }
+
+    .app-header-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .app-header-subtitle {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(204, 220, 255, 0.9);
+    }
+
+    .app-body {
+      margin-top: 18px;
+    }
+
+    .grid-2 {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      flex: 1;
+      background: radial-gradient(circle at top, rgba(15, 25, 58, 0.98), rgba(6, 10, 25, 0.98));
+      border-radius: 24px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(123, 183, 255, 0.35);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.65);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: rgba(221, 235, 255, 0.95);
+      font-weight: 500;
+    }
+
+    .panel-header span:last-child {
+      font-size: 11px;
+      color: rgba(178, 202, 252, 0.9);
+    }
+
+    .three-cols {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field-block-title {
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: rgba(194, 214, 255, 0.95);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      padding: 9px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: radial-gradient(circle at top, #020514 0, #050815 60%);
+      color: #f5f7ff;
+      font-size: 13px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    textarea::placeholder {
+      color: rgba(171, 196, 245, 0.7);
+    }
+
+    textarea:focus {
+      border-color: rgba(151, 212, 255, 0.98);
+      box-shadow: 0 0 0 1px rgba(117, 191, 255, 0.8);
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+
+    .field-row label {
+      font-size: 13px;
+      color: rgba(204, 222, 255, 0.95);
+    }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: rgba(5, 9, 22, 0.96);
+      color: #f5f7ff;
+      font-size: 13px;
+      outline: none;
+      min-width: 90px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      margin-right: 10px;
+      margin-top: 2px;
+      background: rgba(10, 20, 48, 0.9);
+      color: #c9ddff;
+      border: 1px solid rgba(136, 188, 255, 0.6);
+      box-shadow: none;
+      transition: all 0.16s ease-out;
+    }
+
+    .btn:hover {
+      background: rgba(17, 32, 70, 0.95);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #4f8dff, #2fd4ff);
+      color: #04101f;
+      border: none;
+      box-shadow: 0 14px 32px rgba(22, 104, 255, 0.7);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-0.5px);
+      box-shadow: 0 16px 36px rgba(22, 104, 255, 0.85);
+    }
+
+    .status,
+    .stats {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(184, 205, 255, 0.9);
+      white-space: pre-wrap;
+    }
+
+    .result-block-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      color: rgba(208, 225, 255, 0.96);
+    }
+
+    .result-box {
+      border-radius: 12px;
+      border: 1px dashed rgba(135, 187, 255, 0.6);
+      padding: 8px 10px;
+      min-height: 60px;
+      font-size: 13px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top, rgba(6, 13, 36, 0.96), rgba(4, 7, 20, 0.98));
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px;
+      }
+
+      .grid-2 {
+        flex-direction: column;
+      }
+
+      .panel {
+        padding: 12px 12px 14px;
+        border-radius: 18px;
+      }
+
+      .three-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class=\"app\">
-  <div class=\"app-header\">
-    <div class=\"title\">功能 4 · 按日期查代码（MC / OFF / 9:00 等）</div>
-    <div class=\"subtitle\">
+<div class="app">
+  <div class="app-header">
+    <div class="app-header-title">功能 4 · 按日期查代码</div>
+    <div class="app-header-subtitle">
       使用【三区域输入】：<br>
-      1. 日期 + 星期：一行日期（12月1日 12月2日 ...），第二行星期（星期一 星期二 ...）<br>
-      2. 姓名：每行一个姓名（中英混合，如 Joyi Xiang 项梦梦）<br>
-      3. 时间 / 代码：每行对应一个姓名，全月的数据（OFF REST 16:00 16:00 ...）
+      - 日期 + 星期；<br>
+      - 姓名列表（支持「英文名 + 中文名」格式）；<br>
+      - 时间 / 代码（如 9:00 / 15:00 / AL / OFF / REST 等）。<br>
+      再选择某个日期 + 某个代码，查看那天对应代码是谁。
     </div>
   </div>
-  <div class=\"app-body\">
-    <div class=\"mode-grid\">
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>1. 粘贴三块内容</span>
-          <span class=\"right\">日期 + 姓名 + 时间 / 代码</span>
+
+  <div class="app-body">
+    <div class="grid-2">
+      <!-- 左侧：三区域输入 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>1. 按三块粘贴原始内容</span>
+          <span>结构需要和飞书表格列顺序一致</span>
         </div>
-        <div class=\"field-line\">
-          <span style=\"font-size:12px;color:#9ca3af;\">① 日期 + 星期</span>
+
+        <div class="three-cols">
+          <div>
+            <div class="field-block-title">① 日期 + 星期</div>
+            <textarea
+              id="codeByDayDatesInput"
+              placeholder="例子：&#10;12月1日 12月2日 12月3日 ...&#10;星期一 星期二 星期三 ..."></textarea>
+          </div>
+
+          <div>
+            <div class="field-block-title">② 姓名列表</div>
+            <textarea
+              id="codeByDayNamesInput"
+              placeholder="例子：&#10;Derrick Chin 陈伟聪&#10;梅志豪 Orien Mei&#10;..."></textarea>
+          </div>
+
+          <div>
+            <div class="field-block-title">③ 时间 / 代码</div>
+            <textarea
+              id="codeByDayCodesInput"
+              placeholder="例子：&#10;9:00 9:00 OFF 9:00 ...&#10;15:00 15:00 REST 15:00 ..."></textarea>
+          </div>
         </div>
-        <textarea id=\"inputDates4\" class=\"input-area\" style=\"height:70px;\" placeholder=\"例子：\\n12月1日 12月2日 12月3日 12月4日 12月5日 12月6日 12月7日\\n星期一 星期二 星期三 星期四 星期五 星期六 星期日\"></textarea>
-        <div class=\"field-line\">
-          <span style=\"font-size:12px;color:#9ca3af;\">② 姓名列表（每行一个，中英混合）</span>
-        </div>
-        <textarea id=\"inputNames4\" class=\"input-area\" style=\"height:90px;\" placeholder=\"例子：\\nJoyi Xiang 项梦梦\\nAiden Cho 左家彦\\nAlden Lim 林江鸿\"></textarea>
-        <div class=\"field-line\">
-          <span style=\"font-size:12px;color:#9ca3af;\">③ 时间 / 代码（每行对应一位姓名）</span>
-        </div>
-        <textarea id=\"inputCodes4\" class=\"input-area\" style=\"height:90px;\" placeholder=\"例子（需要与上方姓名一一对应）：\\nOFF REST 16:00 16:00 16:00 16:00 16:00\\nOFF REST 16:00 16:00 16:00 16:00 16:00\\nOFF REST 16:00 16:00 16:00 16:00 16:00\"></textarea>
-        <div class=\"field-line\">
-          <button class=\"btn\" id=\"btnParse4\">解析表格</button>
-          <button class=\"btn\" id=\"btnClear4\">清空</button>
-        </div>
-        <div class=\"field-line\">
-          <select id=\"daySelect4\">
-            <option value=\"\">请选择日期</option>
+
+        <div class="field-row">
+          <label for="codeByDayDateSelect">日期</label>
+          <select id="codeByDayDateSelect">
+            <option value="">请选择日期</option>
           </select>
-          <select id=\"codeSelect4\">
-            <option value=\"\">请选择代码 / 班次</option>
+
+          <label for="codeByDayCodeSelect">代码 / 班次</label>
+          <select id="codeByDayCodeSelect">
+            <option value="">请选择代码</option>
           </select>
-          <button class=\"btn btn-primary\" id=\"btnQuery4\">查询</button>
+
+          <button class="btn btn-primary" id="btnCodeByDayRun">查询</button>
+          <button class="btn" id="btnCodeByDayClear">清空</button>
         </div>
-        <div class=\"status\" id=\"status4\"></div>
+
+        <div class="status" id="codeByDayStatus">
+          提示：请先粘贴完整三块内容，再点击「查询」，系统会自动填充可选的日期与代码下拉列表。
+        </div>
       </div>
-      <div class=\"panel\">
-        <div class=\"panel-header\">
+
+      <!-- 右侧：结果 -->
+      <div class="panel">
+        <div class="panel-header">
           <span>2. 查询结果</span>
-          <span class=\"right\">指定日期 + 代码 → 对应人员</span>
+          <span>支持查看某日某代码的所有人员</span>
         </div>
-        <textarea id=\"outputText4\" class=\"output-area\" placeholder=\"解析后，选择某一天 + 某个代码（如 9:00 / MC / OFF），这里会显示当天该代码对应的所有人员列表。\"></textarea>
+
+        <div class="result-block">
+          <div class="result-block-title">统计</div>
+          <div class="result-box" id="codeByDaySummary">
+            这里会显示：当前选择的日期、代码，以及匹配到的总人数。
+          </div>
+        </div>
+
+        <div class="result-block" style="margin-top:10px;">
+          <div class="result-block-title">人员名单</div>
+          <div class="result-box" id="codeByDayResult">
+            这里会显示：所有在该日期使用该代码 / 班次的姓名列表。
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<script src=\"js/core.js\"></script>
-<script src=\"js/code-by-day.js\"></script>
+
+<script src="js/core.js"></script>
+<script src="js/code-by-day.js"></script>
 </body>
 </html>
