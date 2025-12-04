@@ -1,54 +1,41 @@
-
 <!DOCTYPE html>
-<html lang=\"zh-CN\">
+<html lang="zh-CN">
 <head>
-  <meta charset=\"UTF-8\">
-  <title>整月代码统计 · 班表工具</title>
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <link rel=\"stylesheet\" href=\"css/common.css\">
+  <meta charset="UTF-8" />
+  <title>整月代码统计</title>
+  <link rel="stylesheet" href="css/common.css" />
 </head>
 <body>
-<div class=\"app\">
-  <div class=\"app-header\">
-    <div class=\"title\">功能 5 · 整月代码统计（MC / AL / OFF 等）</div>
-    <div class=\"subtitle\">
-      使用【三区域输入】：和“按日期查代码”完全一致的结构。<br>
-      输入某个代码（默认 MC），即可统计整个月各个人的出现次数，并按次数从高到低排序。
+  <div class="tool-container">
+    <h1 class="tool-title">功能 5 · 整月代码统计（MC / AL / OFF 等）</h1>
+    <p class="tool-subtitle">
+      使用【三区域输入】，统计整个月内某个代码（默认 MC）的出现次数，并按人汇总，从高到低排序。
+    </p>
+
+    <div class="tool-hint">
+      复制顺序建议：先复制一整月的「日期 + 星期」，再复制完整姓名列表，最后复制整个月的代码 / 班次。
+      工具会自动按行对齐姓名和代码。
     </div>
-  </div>
-  <div class=\"app-body\">
-    <div class=\"mode-grid\">
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>1. 粘贴三块内容</span>
-          <span class=\"right\">日期 + 姓名 + 时间 / 代码</span>
-        </div>
-        <div class=\"field-line\"><span style=\"font-size:12px;color:#9ca3af;\">① 日期 + 星期</span></div>
-        <textarea id=\"inputDates5\" class=\"input-area\" style=\"height:70px;\" placeholder=\"与功能 4 相同：日期一行 + 星期一行\"></textarea>
-        <div class=\"field-line\"><span style=\"font-size:12px;color:#9ca3af;\">② 姓名列表</span></div>
-        <textarea id=\"inputNames5\" class=\"input-area\" style=\"height:90px;\" placeholder=\"与功能 4 相同：每行一个姓名（中英混合）\"></textarea>
-        <div class=\"field-line\"><span style=\"font-size:12px;color:#9ca3af;\">③ 时间 / 代码</span></div>
-        <textarea id=\"inputCodes5\" class=\"input-area\" style=\"height:90px;\" placeholder=\"与功能 4 相同：每行对应一个人，全月的 OFF / REST / 9:00 / MC ...\"></textarea>
-        <div class=\"field-line\">
-          <input id=\"codeInput5\" type=\"text\" placeholder=\"统计的代码（默认 MC）\">
-        </div>
-        <div class=\"field-line\">
-          <button class=\"btn\" id=\"btnClear5\">清空</button>
-          <button class=\"btn btn-primary\" id=\"btnStats5\">统计代码次数</button>
-        </div>
-        <div class=\"status\" id=\"status5\"></div>
-      </div>
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>2. 统计结果</span>
-          <span class=\"right\">按人统计整月出现次数</span>
-        </div>
-        <textarea id=\"outputText5\" class=\"output-area\" placeholder=\"这里会显示：每个人 MC（或其它代码）在整个月出现了多少次，并按次数从高到低排序。\"></textarea>
-      </div>
+
+    <!-- ① 日期 + 星期（目前主要用于校验天数，可先按之前习惯粘贴） -->
+    <div class="field-group">
+      <div class="section-title">① 日期 + 星期</div>
+      <p class="tool-hint">
+        从飞书表格复制一整行日期，下一行星期几，一起粘贴到这里。（暂时只用来校验天数，不会影响统计结果）
+      </p>
+      <textarea
+        id="statsDatesInput"
+        placeholder="例如：&#10;12月1日 12月2日 12月3日 ...&#10;星期一 星期二 星期三 ..."
+      ></textarea>
     </div>
-  </div>
-</div>
-<script src=\"js/core.js\"></script>
-<script src=\"js/code-stats.js\"></script>
-</body>
-</html>
+
+    <!-- ② 姓名列表 -->
+    <div class="field-group">
+      <div class="section-title">② 姓名列表</div>
+      <p class="tool-hint">
+        从飞书复制包含姓名的整块区域。支持「英文名 + 中文名」或「中文名 + 英文名」两种形式，
+        工具会自动忽略「白 / 中 / 晚 / 夜」等小标题。
+      </p>
+      <textarea
+        id="statsNamesInput"
+        placeholder="例如：&#10;Joyi Xiang 项梦梦&#10;Aiden Cho 左家彦&#10;Alden
