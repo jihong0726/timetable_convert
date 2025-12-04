@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang=\"zh-CN\">
+<head>
+  <meta charset=\"UTF-8\">
+  <title>单人班表 · 班表工具</title>
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <link rel=\"stylesheet\" href=\"css/common.css\">
+</head>
+<body>
+<div class=\"app\">
+  <div class=\"app-header\">
+    <div class=\"title\">功能 1 · 单人班表</div>
+    <div class=\"subtitle\">
+      从飞书复制：一行日期（12月1日 12月2日 ...）+ 一行星期（星期一 星期二 ...）+ 一行时间（9:00 9:00 15:00 ...）。<br>
+      支持自动把 9:00 识别为 09:00 - 18:00，并统计早早/白/中/晚/晚晚/夜/年假/休息/出勤数量。
+    </div>
+  </div>
+  <div class=\"app-body\">
+    <div class=\"mode-grid\">
+      <div class=\"panel\">
+        <div class=\"panel-header\">
+          <span>1. 粘贴飞书排班内容</span>
+          <span class=\"right\">日期 + 星期 + 时间</span>
+        </div>
+        <textarea id=\"inputRaw1\" class=\"input-area\" placeholder=\"例子：\\n12月1日 12月2日 12月3日 12月4日 12月5日 12月6日 12月7日\\n星期一 星期二 星期三 星期四 星期五 星期六 星期日\\n9:00 9:00 OFF 9:00 15:00 15:00 OFF\"></textarea>
+        <div class=\"field-line\">
+          <input id=\"titleInput1\" type=\"text\" placeholder=\"标题名称（如 积宏）\">
+          <select id=\"yearSelect1\"></select>
+          <select id=\"monthSelect1\"></select>
+        </div>
+        <div style=\"margin-top:8px;\">
+          <button class=\"btn\" id=\"btnClear1\">清空</button>
+          <button class=\"btn btn-primary\" id=\"btnParse1\">生成时间表</button>
+        </div>
+        <div class=\"status\" id=\"status1\"></div>
+      </div>
+      <div class=\"panel\">
+        <div class=\"panel-header\">
+          <span>2. 结果预览</span>
+          <span class=\"right\">可复制 / TXT / iOS 日历</span>
+        </div>
+        <textarea id=\"outputText1\" class=\"output-area\" placeholder=\"这里会生成：\\n积宏的 2025 年 12 月时间表\\n12月1日（星期一）：09:00 - 18:00 ...\"></textarea>
+        <div style=\"margin-top:8px;\">
+          <button class=\"btn\" id=\"btnCopy1\">复制</button>
+          <button class=\"btn\" id=\"btnDownloadTxt1\">下载 TXT</button>
+          <button class=\"btn\" id=\"btnDownloadICS1\">导出日历 (ICS)</button>
+        </div>
+        <div class=\"stats\" id=\"stats1\"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src=\"js/core.js\"></script>
+<script src=\"js/single.js\"></script>
+</body>
+</html>

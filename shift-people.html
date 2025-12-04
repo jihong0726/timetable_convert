@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang=\"zh-CN\">
+<head>
+  <meta charset=\"UTF-8\">
+  <title>班次查人 · 班表工具</title>
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <link rel=\"stylesheet\" href=\"css/common.css\">
+</head>
+<body>
+<div class=\"app\">
+  <div class=\"app-header\">
+    <div class=\"title\">功能 3 · 班次查人（按一天的直列班次）</div>
+    <div class=\"subtitle\">
+      简化版：适合“某一天”的班次查人。<br>
+      上半部分：姓名列表（每行一个，中英混合）。<br>
+      下半部分：这一整天的班次代码直列（每一行一个时间/代码，如 9:00 / 15:00 / OFF ...），顺序与姓名对应。
+    </div>
+  </div>
+  <div class=\"app-body\">
+    <div class=\"mode-grid\">
+      <div class=\"panel\">
+        <div class=\"panel-header\">
+          <span>1. 粘贴内容</span>
+          <span class=\"right\">姓名 + 直列班次</span>
+        </div>
+        <textarea id=\"inputShift3\" class=\"input-area\" placeholder=\"例子：\\nJoyi Xiang 项梦梦\\nAiden Cho 左家彦\\nAlden Lim 林江鸿\\n...\\n（空一行）\\n9:00\\n15:00\\nOFF\\n...\"></textarea>
+        <div class=\"field-line\">
+          <input id=\"dateLabel3\" type=\"text\" placeholder=\"日期说明（如 12月4日（星期四））\">
+        </div>
+        <div class=\"field-line\">
+          <button class=\"btn\" id=\"btnClear3\">清空</button>
+          <button class=\"btn btn-primary\" id=\"btnParse3\">解析并按班次分组</button>
+        </div>
+        <div class=\"status\" id=\"status3\"></div>
+      </div>
+      <div class=\"panel\">
+        <div class=\"panel-header\">
+          <span>2. 各班次对应人员</span>
+          <span class=\"right\">自动按班次分组</span>
+        </div>
+        <textarea id=\"outputText3\" class=\"output-area\" placeholder=\"解析后，这里会显示：每个班次（白班 09:00 - 18:00 等）下面有哪些人。\"></textarea>
+        <div class=\"stats\" id=\"stats3\"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src=\"js/core.js\"></script>
+<script src=\"js/shift-people.js\"></script>
+</body>
+</html>

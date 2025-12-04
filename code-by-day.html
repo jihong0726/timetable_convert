@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang=\"zh-CN\">
+<head>
+  <meta charset=\"UTF-8\">
+  <title>按日期查代码 · 班表工具</title>
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <link rel=\"stylesheet\" href=\"css/common.css\">
+</head>
+<body>
+<div class=\"app\">
+  <div class=\"app-header\">
+    <div class=\"title\">功能 4 · 按日期查代码（MC / OFF / 9:00 等）</div>
+    <div class=\"subtitle\">
+      使用【三区域输入】：<br>
+      1. 日期 + 星期：一行日期（12月1日 12月2日 ...），第二行星期（星期一 星期二 ...）<br>
+      2. 姓名：每行一个姓名（中英混合，如 Joyi Xiang 项梦梦）<br>
+      3. 时间 / 代码：每行对应一个姓名，全月的数据（OFF REST 16:00 16:00 ...）
+    </div>
+  </div>
+  <div class=\"app-body\">
+    <div class=\"mode-grid\">
+      <div class=\"panel\">
+        <div class=\"panel-header\">
+          <span>1. 粘贴三块内容</span>
+          <span class=\"right\">日期 + 姓名 + 时间 / 代码</span>
+        </div>
+        <div class=\"field-line\">
+          <span style=\"font-size:12px;color:#9ca3af;\">① 日期 + 星期</span>
+        </div>
+        <textarea id=\"inputDates4\" class=\"input-area\" style=\"height:70px;\" placeholder=\"例子：\\n12月1日 12月2日 12月3日 12月4日 12月5日 12月6日 12月7日\\n星期一 星期二 星期三 星期四 星期五 星期六 星期日\"></textarea>
+        <div class=\"field-line\">
+          <span style=\"font-size:12px;color:#9ca3af;\">② 姓名列表（每行一个，中英混合）</span>
+        </div>
+        <textarea id=\"inputNames4\" class=\"input-area\" style=\"height:90px;\" placeholder=\"例子：\\nJoyi Xiang 项梦梦\\nAiden Cho 左家彦\\nAlden Lim 林江鸿\"></textarea>
+        <div class=\"field-line\">
+          <span style=\"font-size:12px;color:#9ca3af;\">③ 时间 / 代码（每行对应一位姓名）</span>
+        </div>
+        <textarea id=\"inputCodes4\" class=\"input-area\" style=\"height:90px;\" placeholder=\"例子（需要与上方姓名一一对应）：\\nOFF REST 16:00 16:00 16:00 16:00 16:00\\nOFF REST 16:00 16:00 16:00 16:00 16:00\\nOFF REST 16:00 16:00 16:00 16:00 16:00\"></textarea>
+        <div class=\"field-line\">
+          <button class=\"btn\" id=\"btnParse4\">解析表格</button>
+          <button class=\"btn\" id=\"btnClear4\">清空</button>
+        </div>
+        <div class=\"field-line\">
+          <select id=\"daySelect4\">
+            <option value=\"\">请选择日期</option>
+          </select>
+          <select id=\"codeSelect4\">
+            <option value=\"\">请选择代码 / 班次</option>
+          </select>
+          <button class=\"btn btn-primary\" id=\"btnQuery4\">查询</button>
+        </div>
+        <div class=\"status\" id=\"status4\"></div>
+      </div>
+      <div class=\"panel\">
+        <div class=\"panel-header\">
+          <span>2. 查询结果</span>
+          <span class=\"right\">指定日期 + 代码 → 对应人员</span>
+        </div>
+        <textarea id=\"outputText4\" class=\"output-area\" placeholder=\"解析后，选择某一天 + 某个代码（如 9:00 / MC / OFF），这里会显示当天该代码对应的所有人员列表。\"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+<script src=\"js/core.js\"></script>
+<script src=\"js/code-by-day.js\"></script>
+</body>
+</html>
