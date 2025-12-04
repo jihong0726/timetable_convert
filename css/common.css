@@ -1,4 +1,4 @@
-/* 通用：所有工具页 iframe（右侧）共用的样式 */
+/* ========= 全局基础 ========= */
 
 *,
 *::before,
@@ -10,18 +10,16 @@ body {
   margin: 0;
   padding: 24px 32px 32px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
-    -apple-system, "Microsoft YaHei", sans-serif;
+    "Microsoft YaHei", sans-serif;
   font-size: 14px;
-  color: #e6f0ff;
+  color: #e5f0ff;
   background: radial-gradient(circle at top, #11172b 0, #050814 45%, #020308 100%);
-  display: flex;
-  justify-content: center;
 }
 
-/* 把页面第一个元素，当成“工具卡片”的外壳来美化，不需要你改 HTML */
-body > *:first-child {
-  max-width: 980px;
-  width: 100%;
+/* ========= 功能页通用外壳（右侧 iframe 内部） ========= */
+
+.app {
+  max-width: 1080px;
   margin: 0 auto;
   background: linear-gradient(145deg, rgba(7, 14, 34, 0.96), rgba(10, 16, 40, 0.98));
   border-radius: 20px;
@@ -30,37 +28,64 @@ body > *:first-child {
   border: 1px solid rgba(119, 178, 255, 0.18);
 }
 
-/* 标题类（你原本 h1/h2/h3 统统会套进这个卡片里） */
-h1,
-h2,
-h3 {
-  margin: 0 0 8px;
+/* ========= 头部：标题 + 说明 ========= */
+
+.app-header {
+  margin-bottom: 18px;
+}
+
+.app-header .title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
   color: #f4f7ff;
 }
 
-h1 {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-h2 {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-p {
-  margin: 4px 0 10px;
-  line-height: 1.6;
+.app-header .subtitle {
+  font-size: 13px;
+  line-height: 1.7;
   color: rgba(204, 220, 255, 0.9);
 }
 
-/* 小标题 / 分区说明可以用 b / strong 或你原来用的文案 */
-b,
-strong {
-  color: #ffffff;
+/* ========= 主体布局：左右两块 panel ========= */
+
+.app-body {
+  margin-top: 4px;
 }
 
-/* 文本域 */
+.mode-grid {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.panel {
+  flex: 1;
+  background: radial-gradient(circle at top, rgba(11, 21, 50, 0.98), rgba(4, 8, 22, 0.98));
+  border-radius: 16px;
+  padding: 14px 14px 16px;
+  border: 1px solid rgba(123, 183, 255, 0.35);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.6);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: rgba(221, 235, 255, 0.95);
+}
+
+.panel-header .right {
+  font-size: 11px;
+  color: rgba(178, 202, 252, 0.9);
+}
+
+/* ========= 文本域 & 文本输入 ========= */
+
+.input-area,
+.output-area,
 textarea {
   width: 100%;
   min-height: 110px;
@@ -73,7 +98,6 @@ textarea {
   font-size: 13px;
   line-height: 1.5;
   outline: none;
-  margin: 4px 0 12px;
 }
 
 textarea::placeholder {
@@ -85,10 +109,17 @@ textarea:focus {
   box-shadow: 0 0 0 1px rgba(117, 191, 255, 0.8);
 }
 
-/* 文本输入框 & 下拉 */
-input[type="text"],
-input[type="number"],
-select {
+/* 单行输入 + 下拉 */
+
+.field-line {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.field-line input[type="text"],
+.field-line select {
   padding: 6px 10px;
   border-radius: 999px;
   border: 1px solid rgba(126, 186, 255, 0.8);
@@ -96,19 +127,15 @@ select {
   color: #f5f7ff;
   font-size: 13px;
   outline: none;
-  margin: 4px 4px 10px 0;
 }
 
-select {
-  padding-right: 26px;
-}
-
-input::placeholder {
+.field-line input::placeholder {
   color: rgba(170, 194, 244, 0.8);
 }
 
-/* 按钮：你现有的所有 <button> 都会自动变好看 */
-button {
+/* ========= 按钮 ========= */
+
+.btn {
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 13px;
@@ -118,41 +145,57 @@ button {
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  margin: 4px 6px 4px 0;
+  margin-right: 8px;
+  background: rgba(10, 20, 48, 0.9);
+  color: #c9ddff;
+  border: 1px solid rgba(136, 188, 255, 0.6);
+  box-shadow: none;
   transition: all 0.16s ease-out;
+}
+
+.btn:hover {
+  background: rgba(17, 32, 70, 0.95);
+}
+
+.btn-primary {
   background: linear-gradient(135deg, #3b82ff, #2fd4ff);
   color: #04101f;
+  border: none;
   box-shadow: 0 10px 24px rgba(22, 104, 255, 0.6);
 }
 
-button:hover {
+.btn-primary:hover {
   filter: brightness(1.05);
   transform: translateY(-0.5px);
   box-shadow: 0 14px 30px rgba(22, 104, 255, 0.75);
 }
 
-/* 如果你有“次级按钮”，可以在 HTML 上加 class="secondary" */
-button.secondary {
-  background: rgba(10, 20, 48, 0.9);
-  color: #c9ddff;
-  box-shadow: none;
-  border: 1px solid rgba(136, 188, 255, 0.6);
+/* ========= 状态/统计文字 ========= */
+
+.status,
+.stats {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(184, 205, 255, 0.86);
 }
 
-button.secondary:hover {
-  background: rgba(17, 32, 70, 0.95);
-}
+/* ========= 通用结果块（给其它功能页用） ========= */
 
-/* 结果区域，如果你原来有一个大框显示结果，可以加 class="result" 来用这套样式 */
+.result-block,
 .result,
 #result,
 #output,
 #statsOutput {
-  margin-top: 6px;
+  margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid rgba(133, 193, 255, 0.5);
-  background: radial-gradient(circle at top, rgba(12, 23, 56, 0.95), rgba(6, 10, 25, 0.98));
+  background: radial-gradient(
+    circle at top,
+    rgba(12, 23, 56, 0.95),
+    rgba(6, 10, 25, 0.98)
+  );
   font-size: 13px;
   max-height: 320px;
   overflow: auto;
@@ -160,7 +203,8 @@ button.secondary:hover {
   line-height: 1.6;
 }
 
-/* 更小的提示文字（你原先可能用 <small>、说明文字之类） */
+/* ========= 小提示文字 ========= */
+
 small {
   display: block;
   margin-top: 6px;
@@ -168,17 +212,22 @@ small {
   color: rgba(175, 199, 252, 0.78);
 }
 
-/* 窄屏适配（如果你在手机上打开） */
-@media (max-width: 768px) {
+/* ========= 窄屏适配 ========= */
+
+@media (max-width: 900px) {
   body {
     padding: 14px 12px 18px;
   }
 
-  body > *:first-child {
-    padding: 16px 14px 20px;
+  .app {
+    padding: 16px 14px 18px;
   }
 
-  textarea {
-    min-height: 90px;
+  .mode-grid {
+    flex-direction: column;
+  }
+
+  .panel {
+    padding: 12px 12px 14px;
   }
 }
