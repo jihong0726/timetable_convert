@@ -1,4 +1,4 @@
-/* ========= 全局基础 ========= */
+/* ===== 基础 ===== */
 
 *,
 *::before,
@@ -8,37 +8,31 @@
 
 body {
   margin: 0;
-  padding: 24px 32px 32px;
+  padding: 16px 20px 20px;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
     "Microsoft YaHei", sans-serif;
   font-size: 14px;
   color: #e5f0ff;
-  background: radial-gradient(circle at top, #11172b 0, #050814 45%, #020308 100%);
+  background: transparent; /* 背景由外层 index.html 控制 */
 }
 
-/* ========= 功能页通用外壳（右侧 iframe 内部） ========= */
+/* ===== 外层容器：每个功能页都应该有 .app 包住 ===== */
 
 .app {
-  max-width: 1080px;
+  max-width: 1000px;
   margin: 0 auto;
-  background: linear-gradient(145deg, rgba(7, 14, 34, 0.96), rgba(10, 16, 40, 0.98));
-  border-radius: 20px;
-  padding: 20px 24px 24px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.78);
-  border: 1px solid rgba(119, 178, 255, 0.18);
 }
 
-/* ========= 头部：标题 + 说明 ========= */
+/* ===== 标题区域 ===== */
 
 .app-header {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .app-header .title {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 6px;
-  color: #f4f7ff;
 }
 
 .app-header .subtitle {
@@ -47,10 +41,10 @@ body {
   color: rgba(204, 220, 255, 0.9);
 }
 
-/* ========= 主体布局：左右两块 panel ========= */
+/* ===== 主体布局：两列 panel ===== */
 
 .app-body {
-  margin-top: 4px;
+  margin-top: 18px;
 }
 
 .mode-grid {
@@ -61,7 +55,7 @@ body {
 
 .panel {
   flex: 1;
-  background: radial-gradient(circle at top, rgba(11, 21, 50, 0.98), rgba(4, 8, 22, 0.98));
+  background: radial-gradient(circle at top, rgba(15, 25, 58, 0.98), rgba(6, 10, 25, 0.98));
   border-radius: 16px;
   padding: 14px 14px 16px;
   border: 1px solid rgba(123, 183, 255, 0.35);
@@ -82,7 +76,7 @@ body {
   color: rgba(178, 202, 252, 0.9);
 }
 
-/* ========= 文本域 & 文本输入 ========= */
+/* ===== 文本区域 & 输入 ===== */
 
 .input-area,
 .output-area,
@@ -133,7 +127,7 @@ textarea:focus {
   color: rgba(170, 194, 244, 0.8);
 }
 
-/* ========= 按钮 ========= */
+/* ===== 按钮 ===== */
 
 .btn {
   border-radius: 999px;
@@ -170,7 +164,7 @@ textarea:focus {
   box-shadow: 0 14px 30px rgba(22, 104, 255, 0.75);
 }
 
-/* ========= 状态/统计文字 ========= */
+/* ===== 状态/统计文字 ===== */
 
 .status,
 .stats {
@@ -180,7 +174,7 @@ textarea:focus {
   color: rgba(184, 205, 255, 0.86);
 }
 
-/* ========= 通用结果块（给其它功能页用） ========= */
+/* ===== 结果块（给其它功能页用） ===== */
 
 .result-block,
 .result,
@@ -203,24 +197,11 @@ textarea:focus {
   line-height: 1.6;
 }
 
-/* ========= 小提示文字 ========= */
-
-small {
-  display: block;
-  margin-top: 6px;
-  font-size: 11px;
-  color: rgba(175, 199, 252, 0.78);
-}
-
-/* ========= 窄屏适配 ========= */
+/* ===== 窄屏适配 ===== */
 
 @media (max-width: 900px) {
   body {
-    padding: 14px 12px 18px;
-  }
-
-  .app {
-    padding: 16px 14px 18px;
+    padding: 12px 10px 16px;
   }
 
   .mode-grid {
