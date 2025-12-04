@@ -1,25 +1,267 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>班表转换工具集</title>
-  
-  <!-- 加载样式（你的页面缺少这个） -->
-  <link rel="stylesheet" href="css/common.css">
+
+  <!-- 公共样式 -->
+  <link rel="stylesheet" href="css/common.css" />
+
+  <!-- 只给首页用的额外样式 -->
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+        -apple-system, "Microsoft YaHei", sans-serif;
+      color: #e5f0ff;
+      background: radial-gradient(circle at top left, #182848 0, #050814 50%, #020308 100%);
+    }
+
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      padding: 32px 40px;
+      box-sizing: border-box;
+      gap: 32px;
+    }
+
+    .sidebar {
+      width: 320px;
+      max-width: 100%;
+      padding-right: 24px;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 178, 255, 0.4);
+      color: #9bbdff;
+      background: linear-gradient(
+        135deg,
+        rgba(63, 99, 189, 0.3),
+        rgba(9, 14, 40, 0.9)
+      );
+      backdrop-filter: blur(12px);
+    }
+
+    .app-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 12px 0 6px;
+      letter-spacing: 0.06em;
+    }
+
+    .app-subtitle {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(221, 233, 255, 0.8);
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: left;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      padding: 10px 14px;
+      background: linear-gradient(
+        135deg,
+        rgba(8, 19, 48, 0.9),
+        rgba(8, 11, 27, 0.9)
+      );
+      color: #c7ddff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.16s ease-out;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item span.main {
+      font-weight: 600;
+      color: #e5f0ff;
+    }
+
+    .nav-item span.desc {
+      font-size: 12px;
+      color: rgba(199, 221, 255, 0.72);
+    }
+
+    .nav-item:hover {
+      border-color: rgba(122, 186, 255, 0.7);
+      box-shadow: 0 0 0 1px rgba(74, 144, 255, 0.4),
+        0 14px 30px rgba(0, 0, 0, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .nav-item.active {
+      border-color: rgba(130, 211, 255, 0.95);
+      background: linear-gradient(
+        135deg,
+        rgba(51, 108, 255, 0.95),
+        rgba(47, 194, 255, 0.9)
+      );
+      color: #041324;
+      box-shadow: 0 18px 40px rgba(10, 80, 180, 0.7);
+    }
+
+    .nav-item.active span.main,
+    .nav-item.active span.desc {
+      color: #041324;
+    }
+
+    .tip {
+      font-size: 12px;
+      color: rgba(177, 203, 255, 0.8);
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .tip strong {
+      color: #fff;
+    }
+
+    .main-panel {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .frame-wrapper {
+      flex: 1;
+      min-height: calc(100vh - 64px);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      background: radial-gradient(circle at top, #141b34 0, #050814 45%, #020308 100%);
+    }
+
+    .tool-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        flex-direction: column;
+        padding: 18px 14px 22px;
+      }
+
+      .sidebar {
+        width: 100%;
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 14px;
+      }
+
+      .main-panel {
+        padding-top: 6px;
+      }
+
+      .frame-wrapper {
+        min-height: 640px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="app-shell">
+    <!-- 左侧：品牌 + 功能选择 -->
+    <aside class="sidebar">
+      <div>
+        <span class="brand-tag">飞书排班助手 · 内部自用</span>
+        <h1 class="app-title">班表转换工具集</h1>
+        <p class="app-subtitle">
+          一个页面搞定：文字版班表、班表对比、班次查人、代码查询、整月统计。
+        </p>
+      </div>
 
-  <h1>班表转换工具集</h1>
-  <p>这里是你的飞书排班小助手合集：</p>
+      <nav class="nav-list">
+        <button class="nav-item active" data-target="single.html">
+          <span class="main">功能 1 · 单人班表</span>
+          <span class="desc">从飞书复制「日期 + 星期 + 时间」，生成文字班表 + 统计 + iOS 日历文件。</span>
+        </button>
 
-  <ul>
-    <li><a href="single.html">功能 1：单人班表</a></li>
-    <li><a href="compare.html">功能 2：班表对比</a></li>
-    <li><a href="shift-people.html">功能 3：班次查人</a></li>
-    <li><a href="code-by-day.html">功能 4：按日期查代码</a></li>
-    <li><a href="code-stats.html">功能 5：整月代码统计</a></li>
-  </ul>
+        <button class="nav-item" data-target="compare.html">
+          <span class="main">功能 2 · 班表对比</span>
+          <span class="desc">对比 2–4 个人的排班，统计所有人都上班 / 同班次的日期。</span>
+        </button>
 
+        <button class="nav-item" data-target="shift-people.html">
+          <span class="main">功能 3 · 班次查人</span>
+          <span class="desc">粘贴姓名列表 + 某天直列时间，查看那天各个班次是谁上班。</span>
+        </button>
+
+        <button class="nav-item" data-target="code-by-day.html">
+          <span class="main">功能 4 · 按日期查代码</span>
+          <span class="desc">【三区域输入】日期+星期、姓名、代码，查某天某代码对应的是谁。</span>
+        </button>
+
+        <button class="nav-item" data-target="code-stats.html">
+          <span class="main">功能 5 · 整月代码统计</span>
+          <span class="desc">【三区域输入】统计整个月内某个代码（如 MC）的出现次数，并按人汇总。</span>
+        </button>
+      </nav>
+
+      <p class="tip">
+        提示：左侧切换不同功能，右侧内容区域会即时刷新，
+        <strong>不会跳转页面 / 不刷新链接</strong>。适合公司电脑固定打开当工具栏用。
+      </p>
+    </aside>
+
+    <!-- 右侧：工具内容区域（用 iframe 装各功能页面） -->
+    <main class="main-panel">
+      <div class="frame-wrapper">
+        <iframe
+          id="toolFrame"
+          class="tool-frame"
+          src="single.html"
+          title="班表工具内容"
+        ></iframe>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll(".nav-item");
+    const frame = document.getElementById("toolFrame");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        // 切换按钮样式
+        buttons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        // 切换右侧 iframe 内容
+        const target = btn.dataset.target;
+        if (target && !frame.src.endsWith("/" + target) && !frame.src.endsWith(target)) {
+          frame.src = target;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
