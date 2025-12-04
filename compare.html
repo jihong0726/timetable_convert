@@ -1,54 +1,286 @@
-
 <!DOCTYPE html>
-<html lang=\"zh-CN\">
+<html lang="zh-CN">
 <head>
-  <meta charset=\"UTF-8\">
-  <title>班表对比 · 班表工具</title>
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-  <link rel=\"stylesheet\" href=\"css/common.css\">
+  <meta charset="UTF-8">
+  <title>功能 2 · 班表对比</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/common.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px 20px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+      "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      color: #e5f0ff;
+      background: transparent;
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .app-header {
+      margin-bottom: 14px;
+    }
+
+    .app-header-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .app-header-subtitle {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(204, 220, 255, 0.9);
+    }
+
+    .app-body {
+      margin-top: 18px;
+    }
+
+    .grid-2 {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      flex: 1;
+      background: radial-gradient(circle at top, rgba(15, 25, 58, 0.98), rgba(6, 10, 25, 0.98));
+      border-radius: 24px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(123, 183, 255, 0.35);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.65);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: rgba(221, 235, 255, 0.95);
+      font-weight: 500;
+    }
+
+    .panel-header span:last-child {
+      font-size: 11px;
+      color: rgba(178, 202, 252, 0.9);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      padding: 11px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: radial-gradient(circle at top, #020514 0, #050815 60%);
+      color: #f5f7ff;
+      font-size: 13px;
+      line-height: 1.6;
+      outline: none;
+    }
+
+    textarea::placeholder {
+      color: rgba(171, 196, 245, 0.7);
+    }
+
+    textarea:focus {
+      border-color: rgba(151, 212, 255, 0.98);
+      box-shadow: 0 0 0 1px rgba(117, 191, 255, 0.8);
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .field-row label {
+      font-size: 13px;
+      color: rgba(204, 222, 255, 0.95);
+    }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: rgba(5, 9, 22, 0.96);
+      color: #f5f7ff;
+      font-size: 13px;
+      outline: none;
+      min-width: 80px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      margin-right: 10px;
+      margin-top: 2px;
+      background: rgba(10, 20, 48, 0.9);
+      color: #c9ddff;
+      border: 1px solid rgba(136, 188, 255, 0.6);
+      box-shadow: none;
+      transition: all 0.16s ease-out;
+    }
+
+    .btn:hover {
+      background: rgba(17, 32, 70, 0.95);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #4f8dff, #2fd4ff);
+      color: #04101f;
+      border: none;
+      box-shadow: 0 14px 32px rgba(22, 104, 255, 0.7);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-0.5px);
+      box-shadow: 0 16px 36px rgba(22, 104, 255, 0.85);
+    }
+
+    .status,
+    .stats {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(184, 205, 255, 0.9);
+      white-space: pre-wrap;
+    }
+
+    .result-block-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      color: rgba(208, 225, 255, 0.96);
+    }
+
+    .result-box {
+      border-radius: 12px;
+      border: 1px dashed rgba(135, 187, 255, 0.6);
+      padding: 8px 10px;
+      min-height: 60px;
+      font-size: 13px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top, rgba(6, 13, 36, 0.96), rgba(4, 7, 20, 0.98));
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px;
+      }
+
+      .grid-2 {
+        flex-direction: column;
+      }
+
+      .panel {
+        padding: 12px 12px 14px;
+        border-radius: 18px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class=\"app\">
-  <div class=\"app-header\">
-    <div class=\"title\">功能 2 · 班表对比（2–4 人）</div>
-    <div class=\"subtitle\">
-      第 1 个人：粘贴完整的飞书排班（三行：日期 + 星期 + 时间）。<br>
-      第 2–4 个人：可以只粘贴时间行（9:00 9:00 15:00 ...），系统会自动套用第 1 人的日期。
+<div class="app">
+  <div class="app-header">
+    <div class="app-header-title">功能 2 · 班表对比</div>
+    <div class="app-header-subtitle">
+     支持 2–4 个人的班表对比：把每个人的「单人班表结果」粘过来，就能统计<br>
+      - 所有人都上班的日期。<br>
+      - 所有人同班次上班的日期（例如同为白班 09:00 - 18:00）。
     </div>
   </div>
-  <div class=\"app-body\">
-    <div class=\"mode-grid\">
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>1. 粘贴多人排班</span>
-          <span class=\"right\">支持 2–4 人</span>
+
+  <div class="app-body">
+    <div class="grid-2">
+      <!-- 左侧：输入 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>1. 选择对比人数 + 粘贴每个人的班表</span>
+          <span>建议直接粘贴功能 1 的输出</span>
         </div>
-        <div class=\"field-line\">
-          <span style=\"font-size:12px;color:#9ca3af;\">对比人数</span>
-          <select id=\"compareCount\">
-            <option value=\"2\">2 人</option>
-            <option value=\"3\">3 人</option>
-            <option value=\"4\">4 人</option>
+
+        <div class="field-row">
+          <label for="compareCount">对比人数</label>
+          <!-- 注意：id 如果和你原来的 js 不一样，可以改回你自己的 -->
+          <select id="compareCount">
+            <option value="2">2 人</option>
+            <option value="3">3 人</option>
+            <option value="4">4 人</option>
           </select>
+
+          <button class="btn" id="btnCompareClear">清空</button>
+          <button class="btn btn-primary" id="btnCompareRun">生成对比</button>
         </div>
-        <div id=\"compareInputs\"></div>
-        <div style=\"margin-top:8px;\">
-          <button class=\"btn\" id=\"btnClear2\">清空</button>
-          <button class=\"btn btn-primary\" id=\"btnCompare\">生成对比</button>
+
+        <div class="status" id="compareHint">
+          示例：本次对比人数：3 人，请在下方依次粘贴 3 个人的班表。
         </div>
-        <div class=\"status\" id=\"status2\"></div>
+
+        <!-- 用 js 动态生成 N 个输入框；保持这个容器的 id 即可 -->
+        <div id="compareInputsContainer" style="margin-top:8px;">
+          <!-- 这里由 compare.js 动态插入：每个人一个 textarea -->
+        </div>
+
       </div>
-      <div class=\"panel\">
-        <div class=\"panel-header\">
-          <span>2. 共同上班结果</span>
-          <span class=\"right\">所有人上班 / 同班次日期</span>
+
+      <!-- 右侧：结果 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>2. 对比结果</span>
+          <span>所有人上班 / 同班次的日期</span>
         </div>
-        <textarea id=\"outputCompare\" class=\"output-area\" placeholder=\"示例：\\n本次对比人数：3 人\\n所有人都上班的日期：15 天\\n所有人同班次上班的日期：9 天\\n\\n同班次日期如下：\\n12月3日（星期三），白班 09:00 - 18:00 ...\"></textarea>
+
+        <div class="result-block">
+          <div class="result-block-title">汇总统计</div>
+          <div class="result-box" id="compareSummary">
+            这里会显示：本次对比人数、共同上班天数、同班次上班天数等统计。
+          </div>
+        </div>
+
+        <div class="result-block" style="margin-top:10px;">
+          <div class="result-block-title">所有人都上班的日期</div>
+          <div class="result-box" id="compareAllWork">
+            这里显示所有人都有班的日期列表。
+          </div>
+        </div>
+
+        <div class="result-block" style="margin-top:10px;">
+          <div class="result-block-title">所有人同班次上班的日期</div>
+          <div class="result-box" id="compareSameShift">
+            这里显示所有人在同一个班次的日期，例如：12月3日（星期三），白班 09:00 - 18:00。
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 </div>
-<script src=\"js/core.js\"></script>
-<script src=\"js/compare.js\"></script>
+
+<script src="js/core.js"></script>
+<script src="js/compare.js"></script>
 </body>
 </html>
