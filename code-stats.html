@@ -1,41 +1,306 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>整月代码统计</title>
-  <link rel="stylesheet" href="css/common.css" />
+  <meta charset="UTF-8">
+  <title>功能 5 · 整月代码统计</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/common.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px 20px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+      "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      color: #e5f0ff;
+      background: transparent;
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .app-header {
+      margin-bottom: 14px;
+    }
+
+    .app-header-title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .app-header-subtitle {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(204, 220, 255, 0.9);
+    }
+
+    .app-body {
+      margin-top: 18px;
+    }
+
+    .grid-2 {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      flex: 1;
+      background: radial-gradient(circle at top, rgba(15, 25, 58, 0.98), rgba(6, 10, 25, 0.98));
+      border-radius: 24px;
+      padding: 16px 18px 18px;
+      border: 1px solid rgba(123, 183, 255, 0.35);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.65);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: rgba(221, 235, 255, 0.95);
+      font-weight: 500;
+    }
+
+    .panel-header span:last-child {
+      font-size: 11px;
+      color: rgba(178, 202, 252, 0.9);
+    }
+
+    .three-cols {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field-block-title {
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: rgba(194, 214, 255, 0.95);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      padding: 9px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: radial-gradient(circle at top, #020514 0, #050815 60%);
+      color: #f5f7ff;
+      font-size: 13px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    textarea::placeholder {
+      color: rgba(171, 196, 245, 0.7);
+    }
+
+    textarea:focus {
+      border-color: rgba(151, 212, 255, 0.98);
+      box-shadow: 0 0 0 1px rgba(117, 191, 255, 0.8);
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+
+    .field-row label {
+      font-size: 13px;
+      color: rgba(204, 222, 255, 0.95);
+    }
+
+    input[type="text"] {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(126, 186, 255, 0.9);
+      background: rgba(5, 9, 22, 0.96);
+      color: #f5f7ff;
+      font-size: 13px;
+      outline: none;
+      min-width: 70px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      margin-right: 10px;
+      margin-top: 2px;
+      background: rgba(10, 20, 48, 0.9);
+      color: #c9ddff;
+      border: 1px solid rgba(136, 188, 255, 0.6);
+      box-shadow: none;
+      transition: all 0.16s ease-out;
+    }
+
+    .btn:hover {
+      background: rgba(17, 32, 70, 0.95);
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at top left, #4f8dff, #2fd4ff);
+      color: #04101f;
+      border: none;
+      box-shadow: 0 14px 32px rgba(22, 104, 255, 0.7);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-0.5px);
+      box-shadow: 0 16px 36px rgba(22, 104, 255, 0.85);
+    }
+
+    .status,
+    .stats {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(184, 205, 255, 0.9);
+      white-space: pre-wrap;
+    }
+
+    .result-block-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 4px;
+      margin-bottom: 4px;
+      color: rgba(208, 225, 255, 0.96);
+    }
+
+    .result-box {
+      border-radius: 12px;
+      border: 1px dashed rgba(135, 187, 255, 0.6);
+      padding: 8px 10px;
+      min-height: 60px;
+      font-size: 13px;
+      line-height: 1.6;
+      background: radial-gradient(circle at top, rgba(6, 13, 36, 0.96), rgba(4, 7, 20, 0.98));
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px;
+      }
+
+      .grid-2 {
+        flex-direction: column;
+      }
+
+      .panel {
+        padding: 12px 12px 14px;
+        border-radius: 18px;
+      }
+
+      .three-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="tool-container">
-    <h1 class="tool-title">功能 5 · 整月代码统计（MC / AL / OFF 等）</h1>
-    <p class="tool-subtitle">
-      使用【三区域输入】，统计整个月内某个代码（默认 MC）的出现次数，并按人汇总，从高到低排序。
-    </p>
-
-    <div class="tool-hint">
-      复制顺序建议：先复制一整月的「日期 + 星期」，再复制完整姓名列表，最后复制整个月的代码 / 班次。
-      工具会自动按行对齐姓名和代码。
+<div class="app">
+  <div class="app-header">
+    <div class="app-header-title">功能 5 · 整月代码统计（MC / AL / OFF 等）</div>
+    <div class="app-header-subtitle">
+      使用【三区域输入】，统计整个月内某个代码（默认 MC）的出现次数，并按人汇总，从高到低排序。<br>
+      复制顺序建议：先复制一整月的「日期 + 星期」，再复制整块姓名列表，最后复制整个月的代码 / 班次。<br>
+      工具会自动按照姓名行与代码行进行匹配。可用于统计 MC / AL / OFF / Training / Support 等。
     </div>
+  </div>
 
-    <!-- ① 日期 + 星期（目前主要用于校验天数，可先按之前习惯粘贴） -->
-    <div class="field-group">
-      <div class="section-title">① 日期 + 星期</div>
-      <p class="tool-hint">
-        从飞书表格复制一整行日期，下一行星期几，一起粘贴到这里。（暂时只用来校验天数，不会影响统计结果）
-      </p>
-      <textarea
-        id="statsDatesInput"
-        placeholder="例如：&#10;12月1日 12月2日 12月3日 ...&#10;星期一 星期二 星期三 ..."
-      ></textarea>
+  <div class="app-body">
+    <div class="grid-2">
+      <!-- 左侧：输入区域 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>1. 粘贴三块原始内容</span>
+          <span>结构需要和飞书表格列顺序一致</span>
+        </div>
+
+        <div class="three-cols">
+          <div>
+            <div class="field-block-title">① 日期 + 星期</div>
+            <textarea
+              id="codeStatsDatesInput"
+              placeholder="例子：&#10;12月1日 12月2日 12月3日 ...&#10;星期一 星期二 星期三 ..."></textarea>
+          </div>
+
+          <div>
+            <div class="field-block-title">② 姓名列表</div>
+            <textarea
+              id="codeStatsNamesInput"
+              placeholder="例子：&#10;Derrick Chin 陈伟聪&#10;梅志豪 Orien Mei&#10;..."></textarea>
+          </div>
+
+          <div>
+            <div class="field-block-title">③ 每日代码 / 班次</div>
+            <textarea
+              id="codeStatsCodesInput"
+              placeholder="例子：&#10;9:00 9:00 OFF 9:00 9:00 ...&#10;MC AL OFF REST ...&#10;（每行对应一个人，顺序与姓名列表一致）"></textarea>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label for="codeStatsTargetInput">统计的代码</label>
+          <input id="codeStatsTargetInput" type="text" value="MC" placeholder="如 MC / AL / OFF">
+          <button class="btn btn-primary" id="btnCodeStatsRun">统计代码次数</button>
+          <button class="btn" id="btnCodeStatsClear">清空</button>
+        </div>
+
+        <div class="status" id="codeStatsStatus">
+          提示：仅统计和「统计的代码」完全一致的内容（区分大小写）。姓名需为一行一个人，顺序和代码行一一对应。
+        </div>
+      </div>
+
+      <!-- 右侧：结果区域 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>2. 统计结果 · 按人汇总</span>
+          <span>从出现次数最高的人开始展示</span>
+        </div>
+
+        <div class="result-block">
+          <div class="result-block-title">整体统计</div>
+          <div class="result-box" id="codeStatsSummary">
+            这里会显示：统计的代码、总出现次数、涉及人数等信息。
+          </div>
+        </div>
+
+        <div class="result-block" style="margin-top:10px;">
+          <div class="result-block-title">按人明细（由高到低）</div>
+          <div class="result-box" id="codeStatsList">
+            这里会显示：每个人对应代码出现的次数，比如：&#10;1. 梅志豪 Orien Mei - 5 次&#10;2. Derrick Chin 陈伟聪 - 3 次
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- ② 姓名列表 -->
-    <div class="field-group">
-      <div class="section-title">② 姓名列表</div>
-      <p class="tool-hint">
-        从飞书复制包含姓名的整块区域。支持「英文名 + 中文名」或「中文名 + 英文名」两种形式，
-        工具会自动忽略「白 / 中 / 晚 / 夜」等小标题。
-      </p>
-      <textarea
-        id="statsNamesInput"
-        placeholder="例如：&#10;Joyi Xiang 项梦梦&#10;Aiden Cho 左家彦&#10;Alden
+<script src="js/core.js"></script>
+<script src="js/code-stats.js"></script>
+</body>
+</html>
